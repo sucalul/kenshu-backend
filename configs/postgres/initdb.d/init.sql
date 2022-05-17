@@ -1,11 +1,3 @@
--- -- updated_atを入れる関数を作る
--- CREATE FUNCTION set_updated_at() RETURNS OPAQUE AS `
---     begin
---         new.updated_at := ''now'';
---         return new;
---     end;
--- ` LANGUAGE plpgsql;
-
 CREATE FUNCTION set_updated_at() RETURNS OPAQUE AS '
     begin
         new.updated_at := ''now'';
@@ -52,6 +44,7 @@ CREATE TABLE article_images
     FOREIGN KEY (article_id) REFERENCES articles (id) on DELETE CASCADE
 );
 
+-- 更新時のトリガーを作成
 CREATE TRIGGER update_tri_article_images BEFORE UPDATE ON article_images FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
 
 CREATE TABLE tags
@@ -62,6 +55,7 @@ CREATE TABLE tags
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 更新時のトリガーを作成
 CREATE TRIGGER update_tri_tags BEFORE UPDATE ON tags FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
 
 CREATE TABLE article_tags
