@@ -11,7 +11,7 @@ CREATE TABLE users
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    profile_img_url VARCHAR(255) NOT NULL,
+    profile_resource_id VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -38,7 +38,7 @@ CREATE TABLE article_images
 (
     id SERIAL NOT NULL PRIMARY KEY,
     article_id INT NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
+    resource_id VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (article_id) REFERENCES articles (id) on DELETE CASCADE
@@ -66,3 +66,5 @@ CREATE TABLE article_tags
     FOREIGN KEY (tag_id) REFERENCES tags (id) on DELETE CASCADE,
     PRIMARY KEY(article_id, tag_id)
 );
+
+CREATE INDEX ON article_tags (tag_id);
