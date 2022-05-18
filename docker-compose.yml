@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:12
+    container_name: "kenshu-php-db"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db/:/var/lib/postgresql/data
+      - ./configs/postgres/initdb.d:/docker-entrypoint-initdb.d
+
+  web:
+    build: .
+    container_name: "kenshu-php-web"
+    volumes:
+      - "./web:/var/www/html"
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
