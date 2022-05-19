@@ -1,12 +1,20 @@
 <?php
 
+require_once './controller/articles/index.php';
+
 // path=>function nameで連想配列を作る
 const ROUTES = [
     'articles' => [
         '/' => 'articleList',
+        '/create' => 'articleCreate',
         '/:id' => 'articleDetail'
     ]
 ];
+
+function redirect($url) {
+    header("Location: {$url}");
+    exit;
+}
 
 function articleRouter($uris, $id, $function) {
     // /articles/<ここ>に何も値がない時
@@ -18,6 +26,10 @@ function articleRouter($uris, $id, $function) {
     if (is_numeric($uris[2]) && !array_key_exists('3', $uris)) {
         $function = ROUTES[$uris[1]]['/:id'];
         return $function($id);
+    }
+    if ($uris[2] === 'create' && !array_key_exists('3', $uris)) {
+        $function = ROUTES[$uris[1]]['/create'];
+        $function();
     }
     echo '404だよ';
     return http_response_code(404);

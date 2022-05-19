@@ -12,5 +12,12 @@
     <button type="button" class="btn btn-info" onclick="location.href='/articles/<?= $article['id'] ?>'">More</button>
     <p>-------------------------</p>
 <?php endforeach; ?>
+<form action="/articles/create" method="post">
+    <label class="title" for="title">title</label>
+    <input id="title" type="text" name="title">
+    <label class="body" for="body">本文</label>
+    <textarea rows="4" id="body" name="body"></textarea>
+    <input type="submit" name="submit" >
+</form>
 </body>
 </html>

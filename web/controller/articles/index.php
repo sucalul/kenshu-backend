@@ -25,3 +25,12 @@ function articleDetail($id) {
     $article = $article[0];
     include 'template/articleDetail.php';
 }
+
+function articleCreate() {
+    $connection = new Article();
+    $title = $_POST['title'];
+    $body = $_POST['body'];
+    $connection->create($title, $body);
+    header("Location: /articles");
+    exit;
+}
