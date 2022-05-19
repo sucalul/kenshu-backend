@@ -30,6 +30,7 @@ function articleCreate() {
     $connection = new Article();
     $title = $_POST['title'];
     $body = $_POST['body'];
+    // TODO: validation
     $connection->create($title, $body);
     header("Location: /articles");
     exit;
