@@ -5,7 +5,7 @@ require_once 'model/articles.php';
 
 // TODO: class化 -> やるかどうか迷う
 
-function article_list() {
+function articleList() {
     $connection = new Article();
     $articles = $connection->getAll();
     if (count($articles) === 0) {
@@ -15,7 +15,7 @@ function article_list() {
     include 'template/articles.php';
 }
 
-function article_detail($id) {
+function articleDetail($id) {
     $connection = new Article();
     $article = $connection->getByID($id);
     if (count($article) === 0) {

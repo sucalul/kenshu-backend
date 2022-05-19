@@ -1,7 +1,7 @@
 # 設計など
 
 ## Router
-|メソッド|パスとクエリ|view|処理内容
+|メソッド|パスとクエリ|function name|処理内容
 |:--|:--|:--|:--
-|GET|/articles||投稿一覧
-|GET|/articles/:id||投稿詳細
+|GET|/articles|articleList|投稿一覧
+|GET|/articles/:id|articleDetail|投稿詳細
