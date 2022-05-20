@@ -31,6 +31,21 @@ function articleCreate() {
     $title = $_POST['title'];
     $body = $_POST['body'];
     // TODO: validation
+
+    $errors = [];
+    //  空白文字チェック
+    $pattern="^(\s|　)+$";
+    if (mb_ereg_match($pattern, $title)) {
+        $errors[] = 'タイトルは必須です。';
+    }
+    if (mb_ereg_match($pattern, $body)) {
+        $errors[] = '本文は必須です。';
+    }
+    if (count($errors) > 0) {
+        // TODO: ここまでで取得した$errorsをどのようにフロントに表示させるか
+        return;
+    }
+
     $connection->create($title, $body);
     header("Location: /articles");
     exit;

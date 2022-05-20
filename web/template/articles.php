@@ -11,7 +11,16 @@
     <h3><?= $article['title'] ?></h3>
     <button type="button" class="btn btn-info" onclick="location.href='/articles/<?= $article['id'] ?>'">More</button>
     <p>-------------------------</p>
-<?php endforeach; ?>
+<?php endforeach;?>
+
+<?php if($errors): ?>
+<ul class="error_list">
+    <?php foreach( $errors as $value ): ?>
+        <li><?php echo $value; ?></li>
+    <?php endforeach; ?>
+</ul>
+<?php endif; ?>
+
 <form action="/articles/create" method="post">
     <label class="title" for="title">title</label>
     <input id="title" type="text" name="title" required>
