@@ -1,12 +1,14 @@
 # kenshu-backend
 
-## top
-http://0.0.0.0:8080/
+## top(記事一覧ページ)
+http://localhost:8080/articles
 
 ## ERD
 https://app.diagrams.net/#G1TGqFK3qw8rmY8huXjy_gyperxViDhmJq
 
 ## 起動方法
+- `make up` したら各テーブルが作られ、初期データがいくつか入る
+
 ### 初回
 ```
 $ make build
