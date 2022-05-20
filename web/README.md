@@ -5,3 +5,4 @@
 |:--|:--|:--|:--
 |GET|/articles|articleList|投稿一覧
 |GET|/articles/:id|articleDetail|投稿詳細
+|GET, POST|/articles/create|articleCreate|投稿作成
