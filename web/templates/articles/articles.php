@@ -12,21 +12,6 @@
     <button type="button" class="btn btn-info" onclick="location.href='/articles/<?= $article['id'] ?>'">More</button>
     <p>-------------------------</p>
 <?php endforeach;?>
-
-<?php if($errors): ?>
-<ul class="error_list">
-    <?php foreach( $errors as $value ): ?>
-        <li><?php echo $value; ?></li>
-    <?php endforeach; ?>
-</ul>
-<?php endif; ?>
-
-<form action="/articles/create" method="post">
-    <label class="title" for="title">title</label>
-    <input id="title" type="text" name="title" required>
-    <label class="body" for="body">本文</label>
-    <textarea rows="4" id="body" name="body" required></textarea>
-    <input type="submit" name="submit" >
-</form>
+<button type="button" onclick="location.href='/articles/create'">新規作成</button>
 </body>
 </html>
