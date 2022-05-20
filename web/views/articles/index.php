@@ -1,7 +1,7 @@
 
 <?php
-require_once 'model/connection.php';
-require_once 'model/articles.php';
+require_once 'models/connection.php';
+require_once 'models/articles/index.php';
 
 // TODO: class化 -> やるかどうか迷う
 

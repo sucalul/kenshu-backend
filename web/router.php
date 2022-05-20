@@ -1,6 +1,6 @@
 <?php
 
-require_once './controller/articles/index.php';
+require_once './views/articles/index.php';
 
 // path=>function nameで連想配列を作る
 const ROUTES = [
@@ -27,17 +27,11 @@ function articleRouter($uris, $id, $function) {
         $function = ROUTES[$uris[1]]['/:id'];
         return $function($id);
     }
-    // ここで/newの処理
-    //if ($uris[2] == 'new' && !array_key_exists('3', $uris)) {
-    //    $function = ROUTES[$uris[1]]['/new'];
-    //    return $function();
-    //}
     if ($uris[2] === 'create' && !array_key_exists('3', $uris)) {
         $function = ROUTES[$uris[1]]['/create'];
         return $function();
     }
-    echo '404だよ in aritcleRoute';
-    return http_response_code(404);
+    include 'templates/404.php';
 }
 
 function router() {
@@ -68,6 +62,5 @@ function router() {
             return articleRouter($uris, $id, $function);
         }
     }
-    echo '404だよ in router()';
-    return http_response_code(404);
+    include 'templates/404.php';
 }
