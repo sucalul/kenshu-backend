@@ -9,19 +9,19 @@ class Article extends Connection {
     }
 
     public function getAll() {
-        $stmt = $this->db->prepare("SELECT * FROM articles");
+        $stmt = $this->db->prepare("SELECT * FROM articles ORDER BY id ASC;");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getByID($id) {
+    public function getByID(int $id) {
         $stmt = $this->db->prepare("SELECT * FROM articles where id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create($title, $body) {
+    public function create(string $title, string $body) {
         $stmt = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, 1, :title, :body)");
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':body', $body);

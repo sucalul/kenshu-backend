@@ -1,5 +1,6 @@
-db
 vendor
 
 .idea
 .vscode
+
+.env

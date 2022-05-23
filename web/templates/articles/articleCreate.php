@@ -8,7 +8,7 @@
 <?php if($errors): ?>
 <ul class="error_list">
     <?php foreach( $errors as $value ): ?>
-        <li style="color:red"><?= $value; ?></li>
+        <li style="color:red"><?= htmlspecialchars($value, ENT_QUOTES, "UTF-8") ?></li>
     <?php endforeach; ?>
 </ul>
 <?php endif; ?>
@@ -19,6 +19,7 @@
     <label class="body" for="body">本文</label>
     <textarea rows="4" id="body" name="body" required></textarea>
     <input type="submit" name="submit" >
+    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
 </form>
 </body>
 </html>

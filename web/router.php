@@ -31,6 +31,7 @@ function articleRouter($uris, $id, $function) {
         $function = ROUTES[$uris[1]]['/create'];
         return $function();
     }
+    http_response_code(404);
     include 'templates/404.php';
 }
 
@@ -54,7 +55,7 @@ function router() {
                 break;
             }
             if (preg_match("/^[0-9]+$/", $uri)) {
-                $id = $uri;
+                $id = (int) $uri;
             }
         }
         // articleへのリクエストかどうか
@@ -62,5 +63,6 @@ function router() {
             return articleRouter($uris, $id, $function);
         }
     }
+    http_response_code(404);
     include 'templates/404.php';
 }

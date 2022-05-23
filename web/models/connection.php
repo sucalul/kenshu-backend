@@ -2,9 +2,9 @@
 
 class Connection {
     public function __construct() {
-        $dsn = 'pgsql:dbname=postgres;host=db;port=5432';
-        $username = 'postgres';
-        $password = 'postgres';
+        $dsn = getenv('DSN');
+        $username = getenv('USERNAME');
+        $password = getenv('PASSWORD');
         try {
             $db = new PDO($dsn, $username, $password);
         } catch (PDOException $e) {
