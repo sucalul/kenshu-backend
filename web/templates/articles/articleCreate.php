@@ -14,12 +14,12 @@
 <?php endif; ?>
 
 <form action="/articles/create" method="post">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, "UTF-8") ?>">
     <label class="title" for="title">タイトル</label>
     <input id="title" type="text" name="title" required>
     <label class="body" for="body">本文</label>
     <textarea rows="4" id="body" name="body" required></textarea>
     <input type="submit" name="submit" >
-    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
 </form>
 </body>
 </html>
