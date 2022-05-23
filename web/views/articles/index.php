@@ -25,8 +25,12 @@ function articleDetail(int $id) {
 
 function articleCreate() {
     $errors = [];
-    $csrf_token = bin2hex(openssl_random_pseudo_bytes(16));
-    $_SESSION["csrf_token"] = $csrf_token;
+
+    session_start();
+    if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        $csrf_token = bin2hex(openssl_random_pseudo_bytes(16));
+        $_SESSION["csrf_token"] = $csrf_token;
+    }
 
     // post requestが飛んできた時
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
