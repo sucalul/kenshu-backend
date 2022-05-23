@@ -87,6 +87,7 @@ function articleUpdate(int $id) {
             $errors[] = '本文は必須です。';
         }
         if (count($errors) > 0) {
+            http_response_code(204);
             include 'templates/articles/articleUpdate.php';
             return;
         } else {
@@ -96,4 +97,13 @@ function articleUpdate(int $id) {
         }
     }
     include 'templates/articles/articleUpdate.php';
+}
+
+function articleDelete(int $id) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $connection = new Article();
+        $connection->delete($id);
+        header("Location: /articles");
+        exit;
+    }
 }

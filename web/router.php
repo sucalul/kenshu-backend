@@ -9,7 +9,8 @@ const ROUTES = [
         '/create' => 'articleCreate',
         '/:id' => [
             '' => 'articleDetail',
-            '/update' => 'articleUpdate'
+            '/update' => 'articleUpdate',
+            '/delete' => 'articleDelete'
         ]
     ]
 ];
@@ -37,6 +38,9 @@ function articleRouter($uris, $id, $function) {
             return $function($id);
         } elseif ($uris[3] === 'update' && !array_key_exists('4', $uris)) {
             $function = ROUTES[$uris[1]]['/:id']['/update'];
+            return $function($id);
+        } elseif ($uris[3] === 'delete' && !array_key_exists('4', $uris)) {
+            $function = ROUTES[$uris[1]]['/:id']['/delete'];
             return $function($id);
         }
     }
