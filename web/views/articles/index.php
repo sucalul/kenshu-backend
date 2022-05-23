@@ -60,3 +60,36 @@ function articleCreate() {
     // それ以外はtemplateを返す
     include 'templates/articles/articleCreate.php';
 }
+
+function articleUpdate(int $id) {
+    $errors = [];
+    $connection = new Article();
+    $article = $connection->getByID($id);
+    if (count($article) === 0) {
+        http_response_code(404);
+        include 'templates/404.php';
+        return;
+    }
+    $article = $article[0];
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $title = $_POST['title'];
+        $body = $_POST['body'];
+        //  空白文字チェック
+        $pattern="^(\s|　)+$";
+        if (mb_ereg_match($pattern, $title)) {
+            $errors[] = 'タイトルは必須です。';
+        }
+        if (mb_ereg_match($pattern, $body)) {
+            $errors[] = '本文は必須です。';
+        }
+        if (count($errors) > 0) {
+            include 'templates/articles/articleUpdate.php';
+            return;
+        } else {
+            $connection->update($id, $title, $body);
+            header("Location: /articles");
+            exit;
+        }
+    }
+    include 'templates/articles/articleUpdate.php';
+}

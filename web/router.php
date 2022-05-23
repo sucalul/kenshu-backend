@@ -7,7 +7,10 @@ const ROUTES = [
     'articles' => [
         '/' => 'articleList',
         '/create' => 'articleCreate',
-        '/:id' => 'articleDetail'
+        '/:id' => [
+            '' => 'articleDetail',
+            '/update' => 'articleUpdate'
+        ]
     ]
 ];
 
@@ -22,14 +25,20 @@ function articleRouter($uris, $id, $function) {
         $function = ROUTES[$uris[1]]['/'];
         return $function();
     }
-    // /articles/<ここ>が数値またはその次に何かしらの値が入っている時
-    if (is_numeric($uris[2]) && !array_key_exists('3', $uris)) {
-        $function = ROUTES[$uris[1]]['/:id'];
-        return $function($id);
-    }
+    // create
     if ($uris[2] === 'create' && !array_key_exists('3', $uris)) {
         $function = ROUTES[$uris[1]]['/create'];
         return $function();
+    }
+    // /articles/<ここ>が数値またはその次に何かしらの値が入っている時
+    if (is_numeric($uris[2])) {
+        if (!array_key_exists('3', $uris)) {
+            $function = ROUTES[$uris[1]]['/:id'][''];
+            return $function($id);
+        } elseif ($uris[3] === 'update' && !array_key_exists('4', $uris)) {
+            $function = ROUTES[$uris[1]]['/:id']['/update'];
+            return $function($id);
+        }
     }
     http_response_code(404);
     include 'templates/404.php';
@@ -42,7 +51,7 @@ function router() {
     $function = '';
 
     // 画像配信は特別
-    if ($uris[1] === 'template' && $uris[2] === 'images' && is_numeric($uris[3])) {
+    if ($uris[1] === 'templates' && $uris[2] === 'images' && is_numeric($uris[3])) {
         return 'http://localhost:8080' . $request_uri;
     }
 
