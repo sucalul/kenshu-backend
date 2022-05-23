@@ -1,6 +1,5 @@
 <?php
 
-
 class Session {
     function create_csrf_token() {
         session_start();

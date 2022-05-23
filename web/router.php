@@ -57,7 +57,7 @@ function articleRouter($uris, $id, $function) {
             }
             $function = ROUTES[$uris[1]]['/:id']['/update'];
             return $function($id);
-        } elseif ($uris[3] === 'delete' && !array_key_exists('4', $uris)) {
+        } elseif ($uris[3] === 'delete' && !array_key_exists('4', $uris) && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $function = ROUTES[$uris[1]]['/:id']['/delete'];
             return $function($id);
         }

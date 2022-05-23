@@ -99,9 +99,7 @@ function postArticleUpdate(int $id) {
 }
 
 function articleDelete(int $id) {
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $connection = new Article();
-        $connection->delete($id);
-        header("Location: /articles");
-    }
+    $connection = new Article();
+    $connection->delete($id);
+    header("Location: /articles");
 }
