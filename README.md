@@ -15,6 +15,7 @@ https://docs.google.com/spreadsheets/d/1A5ARBKXXXsqYPFTvt0Stlt8U6Qiq1q00FBRtKOA6
 ### 初回
 ```
 $ touch .env
+$ cp .env.example .env
 $ make build
 $ make up
 ```

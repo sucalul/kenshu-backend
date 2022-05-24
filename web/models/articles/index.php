@@ -27,4 +27,18 @@ class Article extends Connection {
         $stmt->bindParam(':body', $body);
         $stmt->execute();
     }
+
+    public function update(int $id, string $title, string $body) {
+        $stmt = $this->db->prepare("UPDATE articles SET title=:title, body=:body where id=:id");
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':body', $body);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
+
+    public function delete(int $id) {
+        $stmt = $this->db->prepare("DELETE FROM articles WHERE id = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
 }
