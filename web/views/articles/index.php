@@ -39,7 +39,8 @@ function postArticleCreate() {
     $errors = [];
     $session = new Session();
     if (!$session->check_csrf_token()) {
-        return;
+        // check_csrf_token()で設定されたstatus codeを返す
+        return http_response_code();
     }
 
     $connection = new Article();
@@ -82,7 +83,8 @@ function postArticleUpdate(int $id) {
     $errors = [];
     $session = new Session();
     if (!$session->check_csrf_token()) {
-        return;
+        // check_csrf_token()で設定されたstatus codeを返す
+        return http_response_code();
     }
 
     $connection = new Article();
@@ -111,7 +113,8 @@ function postArticleUpdate(int $id) {
 function articleDelete(int $id) {
     $session = new Session();
     if (!$session->check_csrf_token()) {
-        return;
+        // check_csrf_token()で設定されたstatus codeを返す
+        return http_response_code();
     }
     $connection = new Article();
     $connection->delete($id);

@@ -11,6 +11,7 @@ class Session {
     function check_csrf_token() {
         session_start();
         if (!isset($_POST["csrf_token"]) || $_POST["csrf_token"] !== $_SESSION["csrf_token"]) {
+            // status code を403に設定
             http_response_code(403);
             include 'templates/403.php';
             return;
