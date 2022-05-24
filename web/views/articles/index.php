@@ -7,12 +7,16 @@ require_once 'helpers/session.php';
 // TODO: class化 -> やるかどうか迷う
 
 function articleList() {
+    $session = new Session();
+    $csrf_token = $session->create_csrf_token();
     $connection = new Article();
     $articles = $connection->getAll();
     include 'templates/articles/articles.php';
 }
 
 function articleDetail(int $id) {
+    $session = new Session();
+    $csrf_token = $session->create_csrf_token();
     $connection = new Article();
     $article = $connection->getByID($id);
     if (count($article) === 0) {
@@ -34,7 +38,9 @@ function getArticleCreate() {
 function postArticleCreate() {
     $errors = [];
     $session = new Session();
-    $session->check_csrf_token();
+    if (!$session->check_csrf_token()) {
+        return;
+    }
 
     $connection = new Article();
     $title = $_POST['title'];
@@ -60,6 +66,7 @@ function getArticleupdate(int $id) {
     $errors = [];
     $session = new Session();
     $csrf_token = $session->create_csrf_token();
+
     $connection = new Article();
     $article = $connection->getByID($id);
     $article = $article[0];
@@ -74,12 +81,15 @@ function getArticleupdate(int $id) {
 function postArticleUpdate(int $id) {
     $errors = [];
     $session = new Session();
-    $session->check_csrf_token();
+    if (!$session->check_csrf_token()) {
+        return;
+    }
 
     $connection = new Article();
     $title = $_POST['title'];
     $body = $_POST['body'];
     //  空白文字チェック
+
     $pattern="^(\s|　)+$";
     if (mb_ereg_match($pattern, $title)) {
         $errors[] = 'タイトルは必須です。';
@@ -99,6 +109,10 @@ function postArticleUpdate(int $id) {
 }
 
 function articleDelete(int $id) {
+    $session = new Session();
+    if (!$session->check_csrf_token()) {
+        return;
+    }
     $connection = new Article();
     $connection->delete($id);
     header("Location: /articles");

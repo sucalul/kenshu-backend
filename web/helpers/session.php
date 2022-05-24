@@ -15,5 +15,6 @@ class Session {
             include 'templates/403.php';
             return;
         }
+        return true;
     }
 }

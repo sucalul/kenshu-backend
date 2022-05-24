@@ -11,6 +11,7 @@
     <h3><?= htmlspecialchars($article['title'], ENT_QUOTES, "UTF-8") ?></h3>
     <button type="button" class="btn btn-info" onclick="location.href='/articles/<?= htmlspecialchars($article['id'], ENT_QUOTES, "UTF-8") ?>'">More</button>
     <form action="/articles/<?= htmlspecialchars($article['id'], ENT_QUOTES, 'UTF-8') ?>/delete" method="post">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, "UTF-8") ?>">
         <button type="submit">Delete</button>
     </form>
     <p>-------------------------</p>
