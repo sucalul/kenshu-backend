@@ -46,20 +46,7 @@ function postArticleCreate() {
     $connection = new Article();
     $title = $_POST['title'];
     $body = $_POST['body'];
-
-    //$image = $_POST['image'];
-
-    //$image = uniqid(mt_rand(), true);//ファイル名をユニーク化
-    //error_log($image);
-    //$image .= '.' . substr(strrchr($_FILES['image']['name'], '.'), 1);//アップロードされたファイルの拡張子を取得
-    //error_log($image);
-    //$img_name = $_FILES['image']['name'];
-    //move_uploaded_file($_FILES['image']['tmp_name'], './images/' . $img_name);
-    // ファイルの保存先
-    $filename = uniqid().'png';
-
-    move_uploaded_file($_FILES['upload_csv']['tmp_name'], '../../templates/images/'.$filename);
-    error_log('../../templates/images/'.$filename);
+    $resources = array();
     // 空白文字チェック
     $pattern="^(\s|　)+$";
     if (mb_ereg_match($pattern, $title)) {
@@ -72,7 +59,16 @@ function postArticleCreate() {
         include 'templates/articles/articleCreate.php';
         return;
     } else {
-        $connection->create($title, $body);
+        for ($i = 0; $i < count($_FILES['upload_image']['name']); $i++) {
+            // file名をuniqueにする
+            $resource = uniqid();
+            $resources[] = $resource;
+            // upload先指定
+            $uploaded_path = 'templates/images/'.$resource.'.png';
+            // fileの移動
+            move_uploaded_file($_FILES['upload_image']['tmp_name'][$i], $uploaded_path);
+        }
+        $connection->create($title, $body, $resources);
         header("Location: /articles");
         exit;
     }
