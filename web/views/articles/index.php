@@ -3,6 +3,7 @@
 require_once 'models/connection.php';
 require_once 'models/articles/index.php';
 require_once 'helpers/session.php';
+require_once 'models/images/index.php';
 
 // TODO: class化 -> やるかどうか迷う
 
@@ -46,6 +47,20 @@ function postArticleCreate() {
     $connection = new Article();
     $title = $_POST['title'];
     $body = $_POST['body'];
+
+    //$image = $_POST['image'];
+
+    //$image = uniqid(mt_rand(), true);//ファイル名をユニーク化
+    //error_log($image);
+    //$image .= '.' . substr(strrchr($_FILES['image']['name'], '.'), 1);//アップロードされたファイルの拡張子を取得
+    //error_log($image);
+    //$img_name = $_FILES['image']['name'];
+    //move_uploaded_file($_FILES['image']['tmp_name'], './images/' . $img_name);
+    // ファイルの保存先
+    $filename = uniqid().'png';
+
+    move_uploaded_file($_FILES['upload_csv']['tmp_name'], '../../templates/images/'.$filename);
+    error_log('../../templates/images/'.$filename);
     // 空白文字チェック
     $pattern="^(\s|　)+$";
     if (mb_ereg_match($pattern, $title)) {
@@ -60,6 +75,7 @@ function postArticleCreate() {
     } else {
         $connection->create($title, $body);
         header("Location: /articles");
+        exit;
     }
 }
 
