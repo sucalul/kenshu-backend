@@ -59,7 +59,12 @@ function postArticleCreate() {
         include 'templates/articles/articleCreate.php';
         return;
     } else {
+        error_log($_POST['is-thumbnail']);
+        error_log(count($_FILES['upload_image']['name']));
         for ($i = 0; $i < count($_FILES['upload_image']['name']); $i++) {
+            if (isset($_POST['is-thumbnail'])) {
+                
+            }
             // file名をuniqueにする
             $resource = uniqid();
             $resources[] = $resource;

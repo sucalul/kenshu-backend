@@ -9,7 +9,6 @@ class Article extends Connection {
     }
 
     public function getAll() {
-        // 初期データの入れ方変える
         $stmt = $this->db->prepare("SELECT * FROM articles JOIN article_images ON articles.id = article_images.article_id ORDER BY articles.id ASC;");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
