@@ -1,6 +1,6 @@
 
 <?php
-require_once 'models/articles.php';
+require_once 'models/Article.php';
 require_once 'helpers/Session.php';
 
 // TODO: class化 -> やるかどうか迷う
