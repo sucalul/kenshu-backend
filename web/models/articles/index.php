@@ -9,13 +9,41 @@ class Article extends Connection {
     }
 
     public function getAll() {
-        $stmt = $this->db->prepare("SELECT * FROM articles JOIN article_images ON articles.id = article_images.article_id ORDER BY articles.id ASC;");
+        // 同じカラム名(id)がふたつ帰ってくるからasで対応
+        $sql = "SELECT
+                    articles.id as id,
+                    articles.title as title,
+                    article_images.resource_id as resource_id
+                FROM
+                    articles
+                    JOIN
+                        article_images
+                    ON  articles.id = article_images.article_id
+                WHERE
+                    articles.thumbnail_image_id = article_images.id
+                ORDER BY
+                    articles.id ASC
+                ;";
+        $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getByID(int $id) {
-        $stmt = $this->db->prepare("SELECT * FROM articles where id = :id");
+        $sql = "SELECT
+                    articles.id as id,
+                    articles.title as title,
+                    articles.body as body,
+                    article_images.resource_id as resource_id
+                FROM
+                    articles
+                    JOIN
+                        article_images
+                    ON  articles.id = article_images.article_id
+                WHERE
+                    articles.id = :id
+                ;";
+        $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -30,27 +58,30 @@ class Article extends Connection {
         // - タグ保存
         //txまとめる
         $this->db->beginTransaction();
-        $stmt = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
-        $stmt->bindParam(':title', $title);
-        $stmt->bindParam(':body', $body);
-        $stmt->execute();
+        $stmt_articles = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
+        $stmt_articles->bindParam(':title', $title);
+        $stmt_articles->bindParam(':body', $body);
+        $stmt_articles->execute();
         $article_id = $this->db->lastInsertId();
+
+        // サムネイル画像をinsert
+        $stmt_article_images_thumbnail = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
+        $stmt_article_images_thumbnail->bindParam(':article_id', $article_id);
+        $stmt_article_images_thumbnail->bindParam(':resource_id', $thumbnail_resource);
+        $stmt_article_images_thumbnail->execute();
+        $thumbnail_image_id = $this->db->lastInsertId();
+
         // サムネイル以外の画像をinsert
         foreach ($resources as $resource_id) {
-            $stmt_images = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
-            $stmt_images->bindparam(':article_id', $article_id);
-            $stmt_images->bindparam(':resource_id', $resource_id);
-            $stmt_images->execute();
+            $stmt_article_images = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
+            $stmt_article_images->bindParam(':article_id', $article_id);
+            $stmt_article_images->bindParam(':resource_id', $resource_id);
+            $stmt_article_images->execute();
         }
-        // サムネイル画像をinsert
-        $stmt_sumbnail = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
-        $stmt_sumbnail->bindparam(':article_id', $article_id);
-        $stmt_sumbnail->bindparam(':resource_id', $thumbnail_resource);
-        $stmt_sumbnail->execute();
-        $thumbnail_resource_id = $this->db->lastInsertId();
+
         // 画像をいれたのでarticleの更新処理をする
         $stmt_article = $this->db->prepare("UPDATE articles SET thumbnail_image_id=:thumbnail_image_id where id=:id");
-        $stmt_article->bindParam(':thumbnail_image_id', $thumbnail_resource_id);
+        $stmt_article->bindParam(':thumbnail_image_id', $thumbnail_image_id);
         $stmt_article->bindParam(':id', $article_id);
         $stmt_article->execute();
         $this->db->commit();
