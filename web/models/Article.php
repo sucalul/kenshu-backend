@@ -88,6 +88,7 @@ class Article extends BaseModel {
             $this->db->commit();
         } catch (Exception $e) {
             $this->db->rollback();
+            throw $e;
         }
     }
 
