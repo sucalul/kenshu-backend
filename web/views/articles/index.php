@@ -1,8 +1,7 @@
 
 <?php
-require_once 'models/connection.php';
-require_once 'models/articles/index.php';
-require_once 'helpers/session.php';
+require_once 'models/Article.php';
+require_once 'helpers/Session.php';
 
 // TODO: class化 -> やるかどうか迷う
 
@@ -24,7 +23,6 @@ function articleDetail(int $id) {
         include 'templates/404.php';
         return;
     }
-    $article = $article[0];
     include 'templates/articles/articleDetail.php';
 }
 
@@ -45,6 +43,8 @@ function postArticleCreate() {
     $connection = new Article();
     $title = $_POST['title'];
     $body = $_POST['body'];
+    $resources = array();
+    $thumbnail_resource = '';
     // 空白文字チェック
     $pattern="^(\s|　)+$";
     if (mb_ereg_match($pattern, $title)) {
@@ -56,10 +56,30 @@ function postArticleCreate() {
     if (count($errors) > 0) {
         include 'templates/articles/articleCreate.php';
         return;
-    } else {
-        $connection->create($title, $body);
-        header("Location: /articles");
     }
+    for ($i = 0; $i < count($_FILES['upload_image']['name']); $i++) {
+        // file名をuniqueにする
+        $resource = uniqid();
+        $resources[] = $resource;
+        //サムネイル登録されているファイル名とforで回しているファイル名が一致したらサムネイルとして登録処理する
+        if (isset($_POST['is-thumbnail']) && $_POST['is-thumbnail'] == $_FILES['upload_image']['name'][$i]) {
+            $thumbnail_resource = $resource;
+            $index = array_search($thumbnail_resource, $resources);
+            array_splice($resources, $index, 1);
+        }
+        // upload先指定
+        $uploaded_path = 'templates/images/'.$resource.'.png';
+        // fileの移動
+        move_uploaded_file($_FILES['upload_image']['tmp_name'][$i], $uploaded_path);
+    }
+    // サムネイルが登録されていなければ一つ目の画像をサムネイルとする
+    if (empty($thumbnail_resource)) {
+        $thumbnail_resource = current($resources);
+        $index = array_search($thumbnail_resource, $resources);
+        array_splice($resources, $index, 1);
+    }
+    $connection->create($title, $body, $resources, $thumbnail_resource);
+    header("Location: /articles");
 }
 
 function getArticleupdate(int $id) {
