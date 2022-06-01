@@ -1,6 +1,6 @@
 <?php
 
-class Connection {
+class BaseModel {
     public function __construct() {
         $dsn = getenv('DSN');
         $username = getenv('USERNAME');

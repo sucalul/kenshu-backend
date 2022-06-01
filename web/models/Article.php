@@ -1,7 +1,7 @@
 <?php
-require_once 'models/connection.php';
+require_once 'models/BaseModel.php';
 
-class Article extends Connection {
+class Article extends BaseModel {
 
     function __construct()
     {
