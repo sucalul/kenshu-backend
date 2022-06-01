@@ -80,7 +80,6 @@ function postArticleCreate() {
     }
     $connection->create($title, $body, $resources, $thumbnail_resource);
     header("Location: /articles");
-    exit;
 }
 
 function getArticleupdate(int $id) {

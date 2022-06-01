@@ -57,34 +57,38 @@ class Article extends BaseModel {
         // - タグ選択
         // - タグ保存
         //txまとめる
-        $this->db->beginTransaction();
-        $stmt_articles = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
-        $stmt_articles->bindParam(':title', $title);
-        $stmt_articles->bindParam(':body', $body);
-        $stmt_articles->execute();
-        $article_id = $this->db->lastInsertId();
+        try {
+            $this->db->beginTransaction();
+            $stmt_articles = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
+            $stmt_articles->bindParam(':title', $title);
+            $stmt_articles->bindParam(':body', $body);
+            $stmt_articles->execute();
+            $article_id = $this->db->lastInsertId();
 
-        // サムネイル画像をinsert
-        $stmt_article_images_thumbnail = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
-        $stmt_article_images_thumbnail->bindParam(':article_id', $article_id);
-        $stmt_article_images_thumbnail->bindParam(':resource_id', $thumbnail_resource);
-        $stmt_article_images_thumbnail->execute();
-        $thumbnail_image_id = $this->db->lastInsertId();
+            // サムネイル画像をinsert
+            $stmt_article_images_thumbnail = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
+            $stmt_article_images_thumbnail->bindParam(':article_id', $article_id);
+            $stmt_article_images_thumbnail->bindParam(':resource_id', $thumbnail_resource);
+            $stmt_article_images_thumbnail->execute();
+            $thumbnail_image_id = $this->db->lastInsertId();
 
-        // サムネイル以外の画像をinsert
-        foreach ($resources as $resource_id) {
-            $stmt_article_images = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
-            $stmt_article_images->bindParam(':article_id', $article_id);
-            $stmt_article_images->bindParam(':resource_id', $resource_id);
-            $stmt_article_images->execute();
+            // サムネイル以外の画像をinsert
+            foreach ($resources as $resource_id) {
+                $stmt_article_images = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
+                $stmt_article_images->bindParam(':article_id', $article_id);
+                $stmt_article_images->bindParam(':resource_id', $resource_id);
+                $stmt_article_images->execute();
+            }
+
+            // 画像をいれたのでarticleの更新処理をする
+            $stmt_article = $this->db->prepare("UPDATE articles SET thumbnail_image_id=:thumbnail_image_id where id=:id");
+            $stmt_article->bindParam(':thumbnail_image_id', $thumbnail_image_id);
+            $stmt_article->bindParam(':id', $article_id);
+            $stmt_article->execute();
+            $this->db->commit();
+        } catch (Exception $e) {
+            $this->db->rollback();
         }
-
-        // 画像をいれたのでarticleの更新処理をする
-        $stmt_article = $this->db->prepare("UPDATE articles SET thumbnail_image_id=:thumbnail_image_id where id=:id");
-        $stmt_article->bindParam(':thumbnail_image_id', $thumbnail_image_id);
-        $stmt_article->bindParam(':id', $article_id);
-        $stmt_article->execute();
-        $this->db->commit();
     }
 
     public function update(int $id, string $title, string $body) {
