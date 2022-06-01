@@ -47,6 +47,7 @@ function postArticleCreate() {
     $title = $_POST['title'];
     $body = $_POST['body'];
     $resources = array();
+    $thumbnail_resource = '';
     // 空白文字チェック
     $pattern="^(\s|　)+$";
     if (mb_ereg_match($pattern, $title)) {
@@ -58,25 +59,28 @@ function postArticleCreate() {
     if (count($errors) > 0) {
         include 'templates/articles/articleCreate.php';
         return;
-    } else {
-        error_log($_POST['is-thumbnail']);
-        error_log(count($_FILES['upload_image']['name']));
-        for ($i = 0; $i < count($_FILES['upload_image']['name']); $i++) {
-            if (isset($_POST['is-thumbnail'])) {
-                
-            }
-            // file名をuniqueにする
-            $resource = uniqid();
-            $resources[] = $resource;
-            // upload先指定
-            $uploaded_path = 'templates/images/'.$resource.'.png';
-            // fileの移動
-            move_uploaded_file($_FILES['upload_image']['tmp_name'][$i], $uploaded_path);
-        }
-        $connection->create($title, $body, $resources);
-        header("Location: /articles");
-        exit;
     }
+    for ($i = 0; $i < count($_FILES['upload_image']['name']); $i++) {
+        // file名をuniqueにする
+        $resource = uniqid();
+        $resources[] = $resource;
+        // サムネイル設定されていたらその値をサムネイルとして扱う
+        if (isset($_POST['is-thumbnail'])) {
+            $thumbnail_resource = $resource;
+            $index = array_search($thumbnail_resource, $resources);
+            array_splice($resources, $index);
+        } else {
+            // サムネイルが登録されていなければ一つ目の画像をサムネイルとする
+            $thumbnail_resource = current($resources);
+        }
+        // upload先指定
+        $uploaded_path = 'templates/images/'.$resource.'.png';
+        // fileの移動
+        move_uploaded_file($_FILES['upload_image']['tmp_name'][$i], $uploaded_path);
+    }
+    $connection->create($title, $body, $resources, $thumbnail_resource);
+    header("Location: /articles");
+    exit;
 }
 
 function getArticleupdate(int $id) {

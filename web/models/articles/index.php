@@ -21,10 +21,10 @@ class Article extends Connection {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create(string $title, string $body, array $resources) {
+    public function create(string $title, string $body, array $resources, string $thumbnail_resource) {
         // TODO:
         // - 複数枚投稿 ✅
-        // - サムネ選択
+        // - サムネ選択 ✅
         // - タグ表示
         // - タグ選択
         // - タグ保存
@@ -35,17 +35,22 @@ class Article extends Connection {
         $stmt->bindParam(':body', $body);
         $stmt->execute();
         $article_id = $this->db->lastInsertId();
-        // 画像をinsert
+        // サムネイル以外の画像をinsert
         foreach ($resources as $resource_id) {
             $stmt_images = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
             $stmt_images->bindparam(':article_id', $article_id);
             $stmt_images->bindparam(':resource_id', $resource_id);
             $stmt_images->execute();
         }
-        $thumbnail_image_id = $this->db->lastInsertId();
+        // サムネイル画像をinsert
+        $stmt_sumbnail = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
+        $stmt_sumbnail->bindparam(':article_id', $article_id);
+        $stmt_sumbnail->bindparam(':resource_id', $thumbnail_resource);
+        $stmt_sumbnail->execute();
+        $thumbnail_resource_id = $this->db->lastInsertId();
         // 画像をいれたのでarticleの更新処理をする
         $stmt_article = $this->db->prepare("UPDATE articles SET thumbnail_image_id=:thumbnail_image_id where id=:id");
-        $stmt_article->bindParam(':thumbnail_image_id', $thumbnail_image_id);
+        $stmt_article->bindParam(':thumbnail_image_id', $thumbnail_resource_id);
         $stmt_article->bindParam(':id', $article_id);
         $stmt_article->execute();
         $this->db->commit();
