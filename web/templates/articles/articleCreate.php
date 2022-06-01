@@ -24,39 +24,38 @@
     <input type="submit" name="submit" >
 </form>
 <script>
+    // 方針
+    // 画像のプレビューと共に、サムネイル指定できるradioボタンを表示する
+    // サムネイル指定したらinputにname='is-thumbnail'を付与し、それ以外のinputからはnameを削除する
+
     let ids = [];
     // ref: https://code-kitchen.dev/html/input-file/
     function previewFile(file) {
-        // プレビュー画像を追加する要素
+        // プレビュー画像を追加する要素を取得
         const preview = document.getElementById('preview');
 
-        // FileReaderオブジェクトを作成
         const reader = new FileReader();
 
-        // ファイルが読み込まれたときに実行する
-        reader.onload = function (e) {
+        reader.onload = (e) => {
             const imageUrl = e.target.result;
             const img = document.createElement("img");
             img.src = imageUrl;
             const filename = file.name;
             img.setAttribute('style', 'height:200px; width: 200px;')
             preview.appendChild(img);
-
             // randomなidを渡す
-            // 方針
-            // value, nameを付与し、送信ボタンを押したときにclickされているものだけvalue, nameを残し、その他を削除する?
-            // ref
-            // https://scrapbox.io/nwtgck/JavaScript:_%E3%83%AF%E3%83%B3%E3%83%A9%E3%82%A4%E3%83%B3%E3%81%A7%E3%83%A9%E3%83%B3%E3%83%80%E3%83%A0%E3%81%AA%E6%96%87%E5%AD%97%E5%88%97%E3%82%92%E5%BE%97%E3%82%8B%E6%96%B9%E6%B3%95:_Math.random()...
-            random = Math.random().toString(36).slice(-8)
+            random = Math.random().toString(36).slice(-8);
             ids.push(random);
+            // input要素を作る
             const input = document.createElement("input");
             input.setAttribute("type", 'radio');
             input.setAttribute("id", random);
             input.setAttribute('value', filename);
             preview.appendChild(input)
+            // label要素を作る
             const label = document.createElement('label');
             label.setAttribute('for', random);
-            label.appendChild(document.createTextNode('これをサムネイルにする!'));
+            label.appendChild(document.createTextNode('この画像をサムネイルにする！'));
             preview.appendChild(label);
         }
         reader.readAsDataURL(file);
@@ -72,15 +71,14 @@
     }
     fileInput.addEventListener('change', handleFileSelect);
 
-    window.addEventListener('change', function(e) {
-        console.log(e.target);
+    const setNameInSelectedInput = (e) => {
         // name='is-thumbnail'がついているものを消す
         let inputs = [];
         // idに紐づくinput要素を取得
         for (let i = 0; i < ids.length; i++) {
             inputs.push(document.getElementById(ids[i]));
         }
-        // const inputElements = document.getElementById()
+        // inputsに含まれているnameを削除
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].name == 'is-thumbnail') {
                 inputs[i].removeAttribute('name');
@@ -90,7 +88,9 @@
         if (e.target.type == 'radio') {
             e.target.setAttribute('name', 'is-thumbnail');
         }
-    });
+    }
+
+    window.addEventListener('change', setNameInSelectedInput);
 </script>
 </body>
 </html>
