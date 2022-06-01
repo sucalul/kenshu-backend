@@ -3,7 +3,6 @@
 require_once 'models/connection.php';
 require_once 'models/articles/index.php';
 require_once 'helpers/session.php';
-require_once 'models/images/index.php';
 
 // TODO: class化 -> やるかどうか迷う
 
