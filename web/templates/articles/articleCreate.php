@@ -12,11 +12,6 @@
     <?php endforeach; ?>
 </ul>
 <?php endif; ?>
-
-<!-- <input type="radio" name="sex" id="man"><label for="man">男</label>
-<input type="radio" name="sex" id="woman"><label for="woman">女</label>
-<input type="radio" name="sex" id="none"><label for="none">未選択</label> -->
-
 <form action="/articles/create" method="post" enctype="multipart/form-data" name="postForm">
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, "UTF-8") ?>">
     <label class="title" for="title">タイトル</label>
