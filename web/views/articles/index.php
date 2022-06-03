@@ -60,7 +60,7 @@ function postArticleCreate() {
     }
 
     $thumbnail_check = new ThumbnailCheck();
-    list($resources, $thumbnail_resource) = $thumbnail_check->thumbnail_check($resources, $thumbnail_resource);
+    list($resources, $thumbnail_resource) = $thumbnail_check->thumbnailCheck($resources, $thumbnail_resource);
     $connection->create($title, $body, $resources, $thumbnail_resource);
     header("Location: /articles");
 }
@@ -117,7 +117,7 @@ function postArticleUpdate(int $id) {
 
     // 追加の画像がある時
     $thumbnail_check = new ThumbnailCheck();
-    list($resources, $thumbnail_resource) = $thumbnail_check->thumbnail_check($resources, $thumbnail_resource);
+    list($resources, $thumbnail_resource) = $thumbnail_check->thumbnailCheck($resources, $thumbnail_resource);
 
     $connection->update($id, $title, $body, $resources, $thumbnail_resource);
     header("Location: /articles");

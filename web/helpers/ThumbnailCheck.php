@@ -1,7 +1,7 @@
 <?php
 
 class ThumbnailCheck {
-    function thumbnail_check(array $resources, string $thumbnail_resource) :array {
+    function thumbnailCheck(array $resources, string $thumbnail_resource) :array {
         for ($i = 0; $i < count($_FILES['upload_image']['name']); $i++) {
             // file名をuniqueにする
             $resource = uniqid();
