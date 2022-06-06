@@ -36,12 +36,19 @@ class Article extends BaseModel {
                     articles.body as body,
                     articles.thumbnail_image_id as thumbnail_image_id,
                     article_images.id as image_id,
-                    article_images.resource_id as resource_id
+                    article_images.resource_id as resource_id,
+                    tags.name as tag_name
                 FROM
                     articles
                     JOIN
                         article_images
                     ON  articles.id = article_images.article_id
+                    JOIN
+                        article_tags
+                    ON articles.id = article_tags.article_id
+                    JOIN
+                        tags
+                    ON article_tags.tag_id = tags.id
                 WHERE
                     articles.id = :id
                 ;";
@@ -51,7 +58,7 @@ class Article extends BaseModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create(string $title, string $body, array $resources, string $thumbnail_resource) {
+    public function create(string $title, string $body, array $resources, string $thumbnail_resource, array $tags) {
         // TODO:
         // - 複数枚投稿 ✅
         // - サムネ選択 ✅
@@ -85,6 +92,23 @@ class Article extends BaseModel {
                 $stmt_article_images->bindParam(':article_id', $article_id);
                 $stmt_article_images->bindParam(':resource_id', $resource_id);
                 $stmt_article_images->execute();
+            }
+
+            // tagをinsert
+            $sql_article_tags = "INSERT INTO article_tags(
+                    article_id,
+                    tag_id
+                )
+                VALUES(
+                    :article_id,
+                    :tag_id
+                )
+                ;";
+            foreach ($tags as $tag) {
+                $stmt_article_tags = $this->db->prepare($sql_article_tags);
+                $stmt_article_tags->bindValue(':article_id', $article_id);
+                $stmt_article_tags->bindValue(':tag_id', $tag);
+                $stmt_article_tags->execute();
             }
 
             // 画像をいれたのでarticleの更新処理をする
