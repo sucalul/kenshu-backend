@@ -19,3 +19,9 @@ stop:
 
 down:
 	docker-compose down
+
+rm-db:
+	docker-compose stop \
+	&& docker-compose down \
+	&& docker volume rm kenshu-backend_postgres \
+	&& docker-compose up

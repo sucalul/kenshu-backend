@@ -34,6 +34,8 @@ class Article extends BaseModel {
                     articles.id as id,
                     articles.title as title,
                     articles.body as body,
+                    articles.thumbnail_image_id as thumbnail_image_id,
+                    article_images.id as image_id,
                     article_images.resource_id as resource_id
                 FROM
                     articles
@@ -57,8 +59,13 @@ class Article extends BaseModel {
         // - タグ選択
         // - タグ保存
         //txまとめる
+        $this->db->beginTransaction();
+
+        if (!$this->db->inTransaction()) {
+            throw new \Exception('トランザクションがアクティブじゃないよ');
+        }
+
         try {
-            $this->db->beginTransaction();
             $stmt_articles = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
             $stmt_articles->bindParam(':title', $title);
             $stmt_articles->bindParam(':body', $body);
@@ -92,12 +99,87 @@ class Article extends BaseModel {
         }
     }
 
-    public function update(int $id, string $title, string $body) {
-        $stmt = $this->db->prepare("UPDATE articles SET title=:title, body=:body where id=:id");
+    // 追加の画像がなかった時
+    public function updateExceptImages(int $id, string $title, string $body, string $thumbnail_resource) {
+        $sql = "UPDATE
+                    articles
+                SET
+                    title = :title,
+                    body = :body,
+                    thumbnail_image_id = article_images.id
+                FROM
+                    article_images
+                WHERE
+                    articles.id = :id
+                AND
+                    article_images.resource_id = :resource_id
+                ;";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':body', $body);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':resource_id', $thumbnail_resource);
         $stmt->execute();
+    }
+
+    public function update(int $id, string $title, string $body, array $resources, string $thumbnail_resource) {
+        $this->db->beginTransaction();
+
+        if (!$this->db->inTransaction()) {
+            throw new \Exception('トランザクションがアクティブじゃないよ');
+        }
+
+        try {
+            // 新しく追加された画像をinsert
+            foreach ($resources as $resource_id) {
+                $stmt_article_images = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
+                $stmt_article_images->bindParam(':article_id', $id);
+                $stmt_article_images->bindParam(':resource_id', $resource_id);
+                $stmt_article_images->execute();
+            }
+            // is-thumbnailで指定されてた画像がなければarticle_imagesにinsertする、あれば何もしない
+            $sql_article_images_thumbnail = "INSERT INTO article_images(
+                        article_id,
+                        resource_id
+                    )
+                    VALUES(
+                        :id,
+                        :resource_id
+                    )
+                    ON  CONFLICT(
+                            resource_id
+                        ) DO NOTHING
+                    ;";
+            $stmt_article_images_thumbnail = $this->db->prepare($sql_article_images_thumbnail);
+            $stmt_article_images_thumbnail->bindParam(':id', $id);
+            $stmt_article_images_thumbnail->bindParam(':resource_id', $thumbnail_resource);
+            $stmt_article_images_thumbnail->execute();
+            // articlesを更新
+            // article_imagesのresource_idと$thumbnail_resourceが一致するarticle_imagesのidでarticlesのthumbnail_image_idを更新する
+            $sql_articles = "UPDATE
+                                articles
+                            SET
+                                title = :title,
+                                body = :body,
+                                thumbnail_image_id = article_images.id
+                            FROM
+                                article_images
+                            WHERE
+                                articles.id = :id
+                            AND
+                                article_images.resource_id = :resource_id
+                            ;";
+            $stmt_articles = $this->db->prepare($sql_articles);
+            $stmt_articles->bindParam(':id', $id);
+            $stmt_articles->bindParam(':title', $title);
+            $stmt_articles->bindParam(':body', $body);
+            $stmt_articles->bindParam(':resource_id', $thumbnail_resource);
+            $stmt_articles->execute();
+            $this->db->commit();
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
+        }
     }
 
     public function delete(int $id) {
