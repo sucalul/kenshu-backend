@@ -9,26 +9,14 @@ class ArticleEntity {
     public array $tags;
 
     function __construct($article) {
-        $this->id = $this->getID($article);
-        $this->title = $this->getTitle($article);
-        $this->body = $this->getBody($article);
-        $this->images = $this->getImages($article);
-        $this->tags = $this->getTags($article);
+        $this->id = $article[0]['id'];
+        $this->title = $article[0]['title'];
+        $this->body = $article[0]['body'];
+        $this->images = $this->getUniqueImages($article);
+        $this->tags = $this->getUniqueTags($article);
     }
 
-    public function getID(array $article) :int {
-        return $article[0]['id'];
-    }
-
-    public function getTitle(array $article) :string {
-        return $article[0]['title'];
-    }
-
-    public function getBody(array $article) :string {
-        return $article[0]['body'];
-    }
-
-    public function getImages(array $article) :array {
+    private function getUniqueImages(array $article) :array {
         $images = array();
         foreach ($article as $a) {
             array_push($images, $a['resource_id']);
@@ -36,7 +24,8 @@ class ArticleEntity {
         $unique_images = array_unique($images);
         return $unique_images;
     }
-    public function getTags(array $article) :array {
+
+    private function getUniqueTags(array $article) :array {
         $tags = array();
         foreach ($article as $a) {
             array_push($tags, $a['tag_name']);

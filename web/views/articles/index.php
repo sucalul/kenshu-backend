@@ -27,7 +27,7 @@ function articleDetail(int $id) {
         return;
     }
 
-    $article = new ArticleEntity($article);
+    $articleEntity = new ArticleEntity($article);
 
     include 'templates/articles/articleDetail.php';
 }
