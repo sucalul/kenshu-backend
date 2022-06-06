@@ -1,7 +1,7 @@
 <?php
 
 class ThumbnailHelper {
-    static function thumbnailHelper(string $thumbnail_resource) :array {
+    static function checkThumbnail(string $thumbnail_resource) :array {
         for ($i = 0; $i < count($_FILES['upload_image']['name']); $i++) {
             // file名をuniqueにする
             $resource = uniqid();

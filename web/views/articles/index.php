@@ -58,7 +58,7 @@ function postArticleCreate() {
         return;
     }
 
-    list($resources, $thumbnail_resource) = ThumbnailHelper::thumbnailHelper($thumbnail_resource);
+    list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($thumbnail_resource);
     $connection->create($title, $body, $resources, $thumbnail_resource);
     header("Location: /articles");
 }
@@ -113,7 +113,7 @@ function postArticleUpdate(int $id) {
     }
 
     // 追加の画像がある時
-    list($resources, $thumbnail_resource) = ThumbnailHelper::thumbnailHelper($thumbnail_resource);
+    list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($thumbnail_resource);
 
     $connection->update($id, $title, $body, $resources, $thumbnail_resource);
     header("Location: /articles");

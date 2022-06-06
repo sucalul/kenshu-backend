@@ -59,8 +59,13 @@ class Article extends BaseModel {
         // - タグ選択
         // - タグ保存
         //txまとめる
+        $this->db->beginTransaction();
+
+        if (!$this->db->inTransaction()) {
+            throw new \Exception('トランザクションがアクティブじゃないよ');
+        }
+
         try {
-            $this->db->beginTransaction();
             $stmt_articles = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
             $stmt_articles->bindParam(':title', $title);
             $stmt_articles->bindParam(':body', $body);
@@ -118,8 +123,13 @@ class Article extends BaseModel {
     }
 
     public function update(int $id, string $title, string $body, array $resources, string $thumbnail_resource) {
+        $this->db->beginTransaction();
+
+        if (!$this->db->inTransaction()) {
+            throw new \Exception('トランザクションがアクティブじゃないよ');
+        }
+
         try {
-            $this->db->beginTransaction();
             // 新しく追加された画像をinsert
             foreach ($resources as $resource_id) {
                 $stmt_article_images = $this->db->prepare("INSERT INTO article_images (article_id, resource_id) VALUES (:article_id, :resource_id)");
