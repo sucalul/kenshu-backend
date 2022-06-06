@@ -27,9 +27,7 @@ function articleDetail(int $id) {
         return;
     }
 
-    $entity = new ArticleEntity();
-    // これらをテンプレート側で表示させる
-    list($id, $title, $body, $images, $tags) = $entity->formatArticle($article);
+    $article = new ArticleEntity($article);
 
     include 'templates/articles/articleDetail.php';
 }
