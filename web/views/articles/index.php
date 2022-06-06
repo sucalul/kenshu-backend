@@ -1,5 +1,6 @@
 
 <?php
+require_once 'entity/ArticleEntity.php';
 require_once 'models/Article.php';
 require_once 'models/Tag.php';
 require_once 'helpers/Session.php';
@@ -20,14 +21,16 @@ function articleDetail(int $id) {
     $csrf_token = $session->create_csrf_token();
     $connection = new Article();
     $article = $connection->getByID($id);
-    $tag_connection = new Tag();
-    $tags = $tag_connection->getByArticleId($id);
-
     if (count($article) === 0) {
         http_response_code(404);
         include 'templates/404.php';
         return;
     }
+
+    $entity = new ArticleEntity();
+    // これらをテンプレート側で表示させる
+    list($id, $title, $body, $images, $tags) = $entity->formatArticle($article);
+
     include 'templates/articles/articleDetail.php';
 }
 
@@ -78,6 +81,9 @@ function getArticleUpdate(int $id) {
 
     $connection = new Article();
     $article = $connection->getByID($id);
+    $tag_connection = new Tag();
+    $tags = $tag_connection->getByArticleId($id);
+
 
     if (count($article) === 0) {
         http_response_code(404);

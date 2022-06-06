@@ -36,12 +36,19 @@ class Article extends BaseModel {
                     articles.body as body,
                     articles.thumbnail_image_id as thumbnail_image_id,
                     article_images.id as image_id,
-                    article_images.resource_id as resource_id
+                    article_images.resource_id as resource_id,
+                    tags.name as tag_name
                 FROM
                     articles
                     JOIN
                         article_images
                     ON  articles.id = article_images.article_id
+                    JOIN
+                        article_tags
+                    ON articles.id = article_tags.article_id
+                    JOIN
+                        tags
+                    ON article_tags.tag_id = tags.id
                 WHERE
                     articles.id = :id
                 ;";
