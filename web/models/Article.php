@@ -98,7 +98,6 @@ class Article extends BaseModel {
                 )
                 ;";
             foreach ($tags as $tag) {
-                error_log($tag);
                 $stmt_article_tags = $this->db->prepare($sql_article_tags);
                 $stmt_article_tags->bindValue(':article_id', $article_id);
                 $stmt_article_tags->bindValue(':tag_id', $tag);
