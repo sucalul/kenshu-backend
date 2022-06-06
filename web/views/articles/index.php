@@ -2,7 +2,7 @@
 <?php
 require_once 'models/Article.php';
 require_once 'helpers/Session.php';
-require_once 'helpers/ThumbnailCheck.php';
+require_once 'helpers/ThumbnailHelper.php';
 
 // TODO: class化 -> やるかどうか迷う
 
@@ -44,7 +44,6 @@ function postArticleCreate() {
     $connection = new Article();
     $title = $_POST['title'];
     $body = $_POST['body'];
-    $resources = array();
     $thumbnail_resource = '';
     // 空白文字チェック
     $pattern="^(\s|　)+$";
@@ -59,8 +58,7 @@ function postArticleCreate() {
         return;
     }
 
-    $thumbnail_check = new ThumbnailCheck();
-    list($resources, $thumbnail_resource) = $thumbnail_check->thumbnailCheck($resources, $thumbnail_resource);
+    list($resources, $thumbnail_resource) = ThumbnailHelper::thumbnailHelper($thumbnail_resource);
     $connection->create($title, $body, $resources, $thumbnail_resource);
     header("Location: /articles");
 }
@@ -91,7 +89,6 @@ function postArticleUpdate(int $id) {
     $connection = new Article();
     $title = $_POST['title'];
     $body = $_POST['body'];
-    $resources = array();
     $thumbnail_resource = $_POST['is-thumbnail'];
 
     //  空白文字チェック
@@ -116,8 +113,7 @@ function postArticleUpdate(int $id) {
     }
 
     // 追加の画像がある時
-    $thumbnail_check = new ThumbnailCheck();
-    list($resources, $thumbnail_resource) = $thumbnail_check->thumbnailCheck($resources, $thumbnail_resource);
+    list($resources, $thumbnail_resource) = ThumbnailHelper::thumbnailHelper($thumbnail_resource);
 
     $connection->update($id, $title, $body, $resources, $thumbnail_resource);
     header("Location: /articles");
