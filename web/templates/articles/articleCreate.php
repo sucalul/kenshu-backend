@@ -21,6 +21,11 @@
     <input type="file" id="images" name="upload_image[]" multiple>
     <div id="preview"></div>
     <input type="submit" name="submit" >
+    <?php foreach( $tags as $tag ): ?>
+        <input type="checkbox" name="tags[]" value="<?= htmlspecialchars($tag['id'], ENT_QUOTES, "UTF-8") ?>">
+            <?= htmlspecialchars($tag['name'], ENT_QUOTES, "UTF-8") ?>
+        </input>
+    <?php endforeach; ?>
 </form>
 <script>
     // 方針

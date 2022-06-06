@@ -1,6 +1,7 @@
 
 <?php
 require_once 'models/Article.php';
+require_once 'models/Tag.php';
 require_once 'helpers/Session.php';
 require_once 'helpers/ThumbnailHelper.php';
 
@@ -19,6 +20,9 @@ function articleDetail(int $id) {
     $csrf_token = $session->create_csrf_token();
     $connection = new Article();
     $article = $connection->getByID($id);
+    $tag_connection = new Tag();
+    $tags = $tag_connection->getByArticleId($id);
+
     if (count($article) === 0) {
         http_response_code(404);
         include 'templates/404.php';
@@ -31,6 +35,8 @@ function getArticleCreate() {
     $errors = [];
     $session = new Session();
     $csrf_token = $session->create_csrf_token();
+    $connection = new Tag();
+    $tags = $connection->getAll();
     include 'templates/articles/articleCreate.php';
 }
 
@@ -58,8 +64,10 @@ function postArticleCreate() {
         return;
     }
 
+    $tags = $_POST['tags'];
+
     list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($thumbnail_resource);
-    $connection->create($title, $body, $resources, $thumbnail_resource);
+    $connection->create($title, $body, $resources, $thumbnail_resource, $tags);
     header("Location: /articles");
 }
 

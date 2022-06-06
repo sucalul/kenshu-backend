@@ -11,6 +11,12 @@
     <?php endforeach;?>
     <h3><?= htmlspecialchars($article[0]['title'], ENT_QUOTES, "UTF-8") ?></h3>
     <h3><?= htmlspecialchars($article[0]['body'], ENT_QUOTES, "UTF-8") ?></h3>
+    <p>登録しているタグ</p>
+    <ul>
+        <?php foreach($tags as $tag) : ?>
+            <li><?= htmlspecialchars($tag['name'], ENT_QUOTES, "UTF-8") ?></li>
+        <?php endforeach;?>
+    </ul>
     <a href="/articles/<?= htmlspecialchars($article[0]['id'], ENT_QUOTES, 'UTF-8') ?>/update">Edit</a>
     <form action="/articles/<?= htmlspecialchars($article[0]['id'], ENT_QUOTES, 'UTF-8') ?>/delete" method="post">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, "UTF-8") ?>">
