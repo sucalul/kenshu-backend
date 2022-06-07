@@ -65,6 +65,7 @@ function postArticleCreate() {
         $errors[] = 'タグは一つ以上入れてください。';
     }
     if (count($errors) > 0) {
+        http_response_code(400);
         $tag_connection = new Tag();
         $tags = $tag_connection->getAll();
         include 'templates/articles/articleCreate.php';
