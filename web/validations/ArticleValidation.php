@@ -1,24 +1,19 @@
 <?php
 
-class Validation {
-    public array $errors;
+class ArticleValidation {
 
-    function __construct() {
-        $this->errors = $this->articleValidation();
-    }
-
-    public function articleValidation() :array {
+    static function articleValidation(array $post) :array {
         $errors = [];
         // 空白文字チェック
         $pattern="^(\s|　)+$";
-        if (mb_ereg_match($pattern, $_POST['title'])) {
+        if (mb_ereg_match($pattern, $post['title'])) {
             $errors[] = 'タイトルは必須です。';
         }
-        if (mb_ereg_match($pattern, $_POST['body'])) {
+        if (mb_ereg_match($pattern, $post['body'])) {
             $errors[] = '本文は必須です。';
         }
         // タグ未入力チェック
-        if (!isset($_POST['tags'])) {
+        if (!isset($post['tags'])) {
             $errors[] = 'タグは一つ以上入れてください。';
         }
 
