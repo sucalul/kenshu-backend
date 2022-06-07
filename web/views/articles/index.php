@@ -60,7 +60,13 @@ function postArticleCreate() {
     if (mb_ereg_match($pattern, $body)) {
         $errors[] = '本文は必須です。';
     }
+    // タグ未入力チェック
+    if (!isset($_POST['tags'])) {
+        $errors[] = 'タグは一つ以上入れてください。';
+    }
     if (count($errors) > 0) {
+        $tag_connection = new Tag();
+        $tags = $tag_connection->getAll();
         include 'templates/articles/articleCreate.php';
         return;
     }
