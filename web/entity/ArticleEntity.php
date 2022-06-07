@@ -5,6 +5,8 @@ class ArticleEntity {
     public int $id;
     public string $title;
     public string $body;
+    public string $image_id;
+    public string $thumbnail_image_id;
     public array $images;
     public array $tags;
 
@@ -12,6 +14,8 @@ class ArticleEntity {
         $this->id = $article[0]['id'];
         $this->title = $article[0]['title'];
         $this->body = $article[0]['body'];
+        $this->image_id = $article[0]['image_id'];
+        $this->thumbnail_image_id = $article[0]['thumbnail_image_id'];
         $this->images = $this->getUniqueImages($article);
         $this->tags = $this->getUniqueTags($article);
     }

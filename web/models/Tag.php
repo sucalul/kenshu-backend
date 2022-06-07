@@ -32,4 +32,36 @@ class Tag extends BaseModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function updateArticleTags(int $id, array $tags){
+        // tagを更新
+        // 一致するかどうかの判定が大変そうなのでdelete->insertをする
+        // まずはarticle_idが一致するarticle_tagsを削除
+        $sql_article_tags_delete = "DELETE
+                                    FROM
+                                        article_tags
+                                    WHERE
+                                        article_id = :article_id
+                                    ;";
+        $stmt_article_tags_delete = $this->db->prepare($sql_article_tags_delete);
+        $stmt_article_tags_delete->bindParam(':article_id', $id);
+        $stmt_article_tags_delete->execute();
+        // 次にinsert
+        $sql_article_tags_insert = "INSERT INTO article_tags(
+                                            article_id,
+                                            tag_id
+                                        )
+                                        VALUES(
+                                            :article_id,
+                                            :tag_id
+                                        )
+                                        ;";
+        foreach ($tags as $tag) {
+            $stmt_article_tags = $this->db->prepare($sql_article_tags_insert);
+            $stmt_article_tags->bindParam(':article_id', $id);
+            $stmt_article_tags->bindParam(':tag_id', $tag);
+            $stmt_article_tags->execute();
+        }
+        return;
+    }
 }

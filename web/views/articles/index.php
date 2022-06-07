@@ -79,15 +79,18 @@ function getArticleUpdate(int $id) {
 
     $connection = new Article();
     $article = $connection->getByID($id);
-    $tag_connection = new Tag();
-    $tags = $tag_connection->getByArticleId($id);
-
 
     if (count($article) === 0) {
         http_response_code(404);
         include 'templates/404.php';
         return;
     }
+
+    $tag_connection = new Tag();
+    $all_tags = $tag_connection->getAll();
+
+    $articleEntity = new ArticleEntity($article);
+
     include 'templates/articles/articleUpdate.php';
 }
 
@@ -111,15 +114,27 @@ function postArticleUpdate(int $id) {
     if (mb_ereg_match($pattern, $body)) {
         $errors[] = '本文は必須です。';
     }
+    // タグ未入力チェック
+    if (!isset($_POST['tags'])) {
+        $errors[] = 'タグは一つ以上入れてください。';
+    }
     if (count($errors) > 0) {
         http_response_code(400);
+        $article = $connection->getByID($id);
+        $tag_connection = new Tag();
+        $all_tags = $tag_connection->getAll();
+
+        $articleEntity = new ArticleEntity($article);
+
         include 'templates/articles/articleUpdate.php';
         return;
     }
 
+    $tags = $_POST['tags'];
+
     // 追加の画像なかった時
     if (empty($_FILES['upload_image']['name'][0])) {
-        $connection->updateExceptImages($id, $title, $body, $thumbnail_resource);
+        $connection->updateExceptImages($id, $title, $body, $thumbnail_resource, $tags);
         header("Location: /articles");
         return;
     }
@@ -127,7 +142,7 @@ function postArticleUpdate(int $id) {
     // 追加の画像がある時
     list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($thumbnail_resource);
 
-    $connection->update($id, $title, $body, $resources, $thumbnail_resource);
+    $connection->update($id, $title, $body, $resources, $thumbnail_resource, $tags);
     header("Location: /articles");
     return;
 }
