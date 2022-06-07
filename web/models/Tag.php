@@ -37,6 +37,8 @@ class Tag extends BaseModel
         // tagを更新
         // 一致するかどうかの判定が大変そうなのでdelete->insertをする
         // まずはarticle_idが一致するarticle_tagsを削除
+        // 本来ならトランザクションを貼るべきだが、
+        // 親のArticleでトランザクションを貼っているからトランザクションは貼らなくても良い
         $sql_article_tags_delete = "DELETE
                                     FROM
                                         article_tags

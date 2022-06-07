@@ -37,17 +37,16 @@
                 </input>
             <?php endforeach; ?>
         </div>
-        <?php foreach($articleEntity->images as $article_image) : ?>
-            <div class="<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>">
-                <?php if ($articleEntity->thumbnail_image_id == $articleEntity->image_id) : ?>
-                    <img src="../../templates/images/<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>.png" alt="" style="width:200px; height:200px">
-                    <input type="radio" id="<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>" name="is-thumbnail" value="<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>" checked>
-                    <label for="<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>">この画像をサムネイルにする！</label>
-                <?php else: ?>
-                    <img src="../../templates/images/<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>.png" alt="" style="width:200px; height:200px">
-                    <input type="radio" id="<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>" name="is-thumbnail" value="<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>">
-                    <label for="<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>">この画像をサムネイルにする！</label>
-                <?php endif; ?>
+        <!-- サムネイル画像 -->
+        <img src="../../templates/images/<?= htmlspecialchars($articleEntity->thumbnail_image_id, ENT_QUOTES, "UTF-8") ?>.png" alt="" style="width:200px; height:200px">
+        <input type="radio" id="<?= htmlspecialchars($articleEntity->thumbnail_image_id, ENT_QUOTES, "UTF-8") ?>" name="is-thumbnail" value="<?= htmlspecialchars($articleEntity->thumbnail_image_id, ENT_QUOTES, "UTF-8") ?>" checked>
+        <label for="<?= htmlspecialchars($article_image, ENT_QUOTES, "UTF-8") ?>">この画像をサムネイルにする！</label>
+        <!-- サムネイル以外の画像 -->
+        <?php foreach($articleEntity->images as $image) : ?>
+            <div class="<?= htmlspecialchars($image, ENT_QUOTES, "UTF-8") ?>">
+                <img src="../../templates/images/<?= htmlspecialchars($image, ENT_QUOTES, "UTF-8") ?>.png" alt="" style="width:200px; height:200px">
+                <input type="radio" id="<?= htmlspecialchars($image, ENT_QUOTES, "UTF-8") ?>" name="is-thumbnail" value="<?= htmlspecialchars($image, ENT_QUOTES, "UTF-8") ?>">
+                <label for="<?= htmlspecialchars($image, ENT_QUOTES, "UTF-8") ?>">この画像をサムネイルにする！</label>
             </div>
         <?php endforeach;?>
         <input type="file" id="images" name="upload_image[]" multiple>
