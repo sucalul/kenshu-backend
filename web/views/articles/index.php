@@ -5,6 +5,7 @@ require_once 'models/Article.php';
 require_once 'models/Tag.php';
 require_once 'helpers/Session.php';
 require_once 'helpers/ThumbnailHelper.php';
+require_once 'validations/validation.php';
 
 // TODO: class化 -> やるかどうか迷う
 
@@ -52,19 +53,9 @@ function postArticleCreate() {
     $title = $_POST['title'];
     $body = $_POST['body'];
     $thumbnail_resource = '';
-    // 空白文字チェック
-    $pattern="^(\s|　)+$";
-    if (mb_ereg_match($pattern, $title)) {
-        $errors[] = 'タイトルは必須です。';
-    }
-    if (mb_ereg_match($pattern, $body)) {
-        $errors[] = '本文は必須です。';
-    }
-    // タグ未入力チェック
-    if (!isset($_POST['tags'])) {
-        $errors[] = 'タグは一つ以上入れてください。';
-    }
-    if (count($errors) > 0) {
+
+    $errors = new Validation();
+    if (count($errors->errors) > 0) {
         http_response_code(400);
         $tag_connection = new Tag();
         $tags = $tag_connection->getAll();
@@ -113,19 +104,8 @@ function postArticleUpdate(int $id) {
     $body = $_POST['body'];
     $thumbnail_resource = $_POST['is-thumbnail'];
 
-    //  空白文字チェック
-    $pattern="^(\s|　)+$";
-    if (mb_ereg_match($pattern, $title)) {
-        $errors[] = 'タイトルは必須です。';
-    }
-    if (mb_ereg_match($pattern, $body)) {
-        $errors[] = '本文は必須です。';
-    }
-    // タグ未入力チェック
-    if (!isset($_POST['tags'])) {
-        $errors[] = 'タグは一つ以上入れてください。';
-    }
-    if (count($errors) > 0) {
+    $errors = new Validation();
+    if (count($errors->errors) > 0) {
         http_response_code(400);
         $article = $connection->getByID($id);
         $tag_connection = new Tag();

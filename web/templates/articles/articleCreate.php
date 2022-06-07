@@ -7,7 +7,7 @@
 <body>
 <?php if($errors): ?>
 <ul class="error_list">
-    <?php foreach( $errors as $value ): ?>
+    <?php foreach( $errors->errors as $value ): ?>
         <li style="color:red"><?= htmlspecialchars($value, ENT_QUOTES, "UTF-8") ?></li>
     <?php endforeach; ?>
 </ul>
