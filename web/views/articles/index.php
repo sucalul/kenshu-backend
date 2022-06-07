@@ -5,6 +5,7 @@ require_once 'models/Article.php';
 require_once 'models/Tag.php';
 require_once 'helpers/Session.php';
 require_once 'helpers/ThumbnailHelper.php';
+require_once 'validations/ArticleValidation.php';
 
 // TODO: class化 -> やるかどうか迷う
 
@@ -52,15 +53,12 @@ function postArticleCreate() {
     $title = $_POST['title'];
     $body = $_POST['body'];
     $thumbnail_resource = '';
-    // 空白文字チェック
-    $pattern="^(\s|　)+$";
-    if (mb_ereg_match($pattern, $title)) {
-        $errors[] = 'タイトルは必須です。';
-    }
-    if (mb_ereg_match($pattern, $body)) {
-        $errors[] = '本文は必須です。';
-    }
+
+    $errors = ArticleValidation::articleValidation($_POST);
     if (count($errors) > 0) {
+        http_response_code(400);
+        $tag_connection = new Tag();
+        $tags = $tag_connection->getAll();
         include 'templates/articles/articleCreate.php';
         return;
     }
@@ -79,15 +77,18 @@ function getArticleUpdate(int $id) {
 
     $connection = new Article();
     $article = $connection->getByID($id);
-    $tag_connection = new Tag();
-    $tags = $tag_connection->getByArticleId($id);
-
 
     if (count($article) === 0) {
         http_response_code(404);
         include 'templates/404.php';
         return;
     }
+
+    $tag_connection = new Tag();
+    $all_tags = $tag_connection->getAll();
+
+    $articleEntity = new ArticleEntity($article);
+
     include 'templates/articles/articleUpdate.php';
 }
 
@@ -103,23 +104,24 @@ function postArticleUpdate(int $id) {
     $body = $_POST['body'];
     $thumbnail_resource = $_POST['is-thumbnail'];
 
-    //  空白文字チェック
-    $pattern="^(\s|　)+$";
-    if (mb_ereg_match($pattern, $title)) {
-        $errors[] = 'タイトルは必須です。';
-    }
-    if (mb_ereg_match($pattern, $body)) {
-        $errors[] = '本文は必須です。';
-    }
+    $errors = ArticleValidation::articleValidation($_POST);
     if (count($errors) > 0) {
         http_response_code(400);
+        $article = $connection->getByID($id);
+        $tag_connection = new Tag();
+        $all_tags = $tag_connection->getAll();
+
+        $articleEntity = new ArticleEntity($article);
+
         include 'templates/articles/articleUpdate.php';
         return;
     }
 
+    $tags = $_POST['tags'];
+
     // 追加の画像なかった時
     if (empty($_FILES['upload_image']['name'][0])) {
-        $connection->updateExceptImages($id, $title, $body, $thumbnail_resource);
+        $connection->updateExceptImages($id, $title, $body, $thumbnail_resource, $tags);
         header("Location: /articles");
         return;
     }
@@ -127,7 +129,7 @@ function postArticleUpdate(int $id) {
     // 追加の画像がある時
     list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($thumbnail_resource);
 
-    $connection->update($id, $title, $body, $resources, $thumbnail_resource);
+    $connection->update($id, $title, $body, $resources, $thumbnail_resource, $tags);
     header("Location: /articles");
     return;
 }

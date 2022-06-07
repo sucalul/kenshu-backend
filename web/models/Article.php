@@ -1,5 +1,6 @@
 <?php
 require_once 'models/BaseModel.php';
+require_once 'models/Tag.php';
 
 class Article extends BaseModel {
 
@@ -59,13 +60,6 @@ class Article extends BaseModel {
     }
 
     public function create(string $title, string $body, array $resources, string $thumbnail_resource, array $tags) {
-        // TODO:
-        // - 複数枚投稿 ✅
-        // - サムネ選択 ✅
-        // - タグ表示
-        // - タグ選択
-        // - タグ保存
-        //txまとめる
         $this->db->beginTransaction();
 
         if (!$this->db->inTransaction()) {
@@ -124,7 +118,17 @@ class Article extends BaseModel {
     }
 
     // 追加の画像がなかった時
-    public function updateExceptImages(int $id, string $title, string $body, string $thumbnail_resource) {
+    public function updateExceptImages(
+        int $id,
+        string $title,
+        string $body,
+        string $thumbnail_resource,
+        array $tags
+    ) {
+        // tagを更新
+        $tag_connection = new Tag();
+        $tag_connection->updateArticleTags($id, $tags);
+        // articleを更新
         $sql = "UPDATE
                     articles
                 SET
@@ -146,7 +150,14 @@ class Article extends BaseModel {
         $stmt->execute();
     }
 
-    public function update(int $id, string $title, string $body, array $resources, string $thumbnail_resource) {
+    public function update(
+        int $id,
+        string $title,
+        string $body,
+        array $resources,
+        string $thumbnail_resource,
+        array $tags
+    ) {
         $this->db->beginTransaction();
 
         if (!$this->db->inTransaction()) {
@@ -178,6 +189,11 @@ class Article extends BaseModel {
             $stmt_article_images_thumbnail->bindParam(':id', $id);
             $stmt_article_images_thumbnail->bindParam(':resource_id', $thumbnail_resource);
             $stmt_article_images_thumbnail->execute();
+
+            // tagを更新
+            $tag_connection = new Tag();
+            $tag_connection->updateArticleTags($id, $tags);
+
             // articlesを更新
             // article_imagesのresource_idと$thumbnail_resourceが一致するarticle_imagesのidでarticlesのthumbnail_image_idを更新する
             $sql_articles = "UPDATE
