@@ -14,7 +14,7 @@
     <?php endforeach; ?>
 </ul>
 <?php endif; ?>
-<form action="/signin" method="post">
+<form action="/auth/signin" method="post">
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, "UTF-8") ?>">
     <div>
         <label for="email">メールアドレス</label>
