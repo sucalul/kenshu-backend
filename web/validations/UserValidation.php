@@ -4,7 +4,7 @@ require_once 'models/User.php';
 class UserValidation
 {
 
-    static function userValidation(array $post): array
+    static function validate(array $post): array
     {
         $errors = [];
         // 空白文字チェック

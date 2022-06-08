@@ -55,7 +55,7 @@ class ArticleController {
         $body = $_POST['body'];
         $thumbnail_resource = '';
 
-        $errors = ArticleValidation::articleValidation($_POST);
+        $errors = ArticleValidation::validate($_POST);
         if (count($errors) > 0) {
             http_response_code(400);
             $tag_connection = new Tag();
@@ -105,7 +105,7 @@ class ArticleController {
         $body = $_POST['body'];
         $thumbnail_resource = $_POST['is-thumbnail'];
 
-        $errors = ArticleValidation::articleValidation($_POST);
+        $errors = ArticleValidation::validate($_POST);
         if (count($errors) > 0) {
             http_response_code(400);
             $article = $connection->getByID($id);

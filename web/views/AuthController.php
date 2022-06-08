@@ -22,7 +22,7 @@ class AuthController
             return;
         }
 
-        $errors = UserValidation::userValidation($_POST);
+        $errors = UserValidation::validate($_POST);
         if (count($errors) > 0) {
             http_response_code(400);
             include 'templates/signup.php';

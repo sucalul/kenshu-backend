@@ -2,7 +2,7 @@
 
 class ArticleValidation {
 
-    static function articleValidation(array $post) :array {
+    static function validate(array $post) :array {
         $errors = [];
         // 空白文字チェック
         $pattern="^(\s|　)+$";
