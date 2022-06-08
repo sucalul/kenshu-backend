@@ -50,6 +50,13 @@ class Router
                 return $controller->postSignup();
             }
         }
+        if ($request_uri === '/signin') {
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                return $controller->getSignin();
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                return $controller->postSignin();
+            }
+        }
     }
 
     public function router()
@@ -76,7 +83,7 @@ class Router
             // articleへのリクエストかどうか
             if ($uris[1] === 'articles') {
                 return $this->articleRouter($request_uri, $article_id);
-            } elseif ($uris[1] === 'signup') {
+            } elseif ($uris[1] === 'signup' || $uris[1] === 'signin') {
                 return $this->authRouter($request_uri);
             }
         }

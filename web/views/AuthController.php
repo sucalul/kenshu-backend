@@ -22,7 +22,7 @@ class AuthController
             return;
         }
 
-        $errors = UserValidation::validate($_POST);
+        $errors = UserValidation::signupValidate($_POST);
         if (count($errors) > 0) {
             http_response_code(400);
             include 'templates/signup.php';
@@ -48,6 +48,37 @@ class AuthController
         // sessionに$emailを入れる
         // これをみてログインしてるか確認する
         $_SESSION['EMAIL'] = $email;
+
+        header("Location: /articles");
+    }
+
+    public function getSignin(): void
+    {
+        $errors = [];
+        $session = new Session();
+        $csrf_token = $session->create_csrf_token();
+        include 'templates/signin.php';
+        return;
+    }
+
+    public function postSignin(): void
+    {
+        $errors = [];
+        $session = new Session();
+        if (!$session->check_csrf_token()) {
+            return;
+        }
+
+        $errors = UserValidation::signinValidate($_POST);
+        if (count($errors) > 0) {
+            http_response_code(400);
+            include 'templates/signin.php';
+            return;
+        }
+
+        // 前のセッションを消す
+        session_regenerate_id(true);
+        $_SESSION['EMAIL'] = $_POST['email'];
 
         header("Location: /articles");
     }

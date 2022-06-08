@@ -40,7 +40,7 @@ class User extends BaseModel
     public function getUserByEmail(string $email): array
     {
         $sql = "SELECT
-                    count(*)
+                    *
                 FROM
                     users
                 WHERE
@@ -49,7 +49,6 @@ class User extends BaseModel
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
-        var_dump(gettype($stmt->fetchAll(PDO::FETCH_ASSOC)));
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
