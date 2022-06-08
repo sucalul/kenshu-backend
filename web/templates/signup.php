@@ -35,7 +35,7 @@
         <label for="profile_image">プロフィール画像</label>
         <input type="file" name="profile_image">
     </div>
-    <input type="submit" name="submit" >
+    <input type="submit" name="submit" value="Sign Up" >
 </form>
 </body>
 </html>
