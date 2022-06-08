@@ -1,5 +1,6 @@
 <?php
 require_once 'helpers/Session.php';
+require_once 'helpers/SigninHelper.php';
 require_once 'models/User.php';
 require_once 'validations/UserValidation.php';
 
@@ -69,7 +70,7 @@ class AuthController
             return;
         }
 
-        $errors = UserValidation::signinValidate($_POST);
+        $errors = SigninHelper::signin($_POST);
         if (count($errors) > 0) {
             http_response_code(400);
             include 'templates/signin.php';

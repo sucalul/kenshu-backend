@@ -1,5 +1,4 @@
 <?php
-require_once 'helpers/SigninHelper.php';
 require_once 'models/User.php';
 
 class UserValidation
@@ -27,10 +26,5 @@ class UserValidation
         }
 
         return $errors;
-    }
-
-    static function signinValidate(array $post): array
-    {
-        return SigninHelper::signin($post);
     }
 }
