@@ -43,11 +43,18 @@ class Router
     private function authRouter($request_uri)
     {
         $controller = new AuthController();
-        if ($request_uri === '/signup') {
+        if ($request_uri === '/auth/signup') {
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 return $controller->getSignup();
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return $controller->postSignup();
+            }
+        }
+        if ($request_uri === '/auth/signin') {
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                return $controller->getSignin();
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                return $controller->postSignin();
             }
         }
     }
@@ -76,7 +83,7 @@ class Router
             // articleへのリクエストかどうか
             if ($uris[1] === 'articles') {
                 return $this->articleRouter($request_uri, $article_id);
-            } elseif ($uris[1] === 'signup') {
+            } elseif ($uris[1] === 'auth') {
                 return $this->authRouter($request_uri);
             }
         }
