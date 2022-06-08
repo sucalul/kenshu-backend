@@ -2,73 +2,48 @@
 
 require_once './views/Controller.php';
 
-class Router {
-    // path=>function nameで連想配列を作る
-    const ROUTES = [
-        'articles' => [
-            '/' => 'articleList',
-            '/create' => [
-                'get' => 'getArticleCreate',
-                'post' => 'postArticleCreate'
-            ],
-            '/:id' => [
-                '' => 'articleDetail',
-                '/update' => [
-                    'get' => 'getArticleUpdate',
-                    'post' => 'postArticleUpdate'
-                ],
-                '/delete' => 'articleDelete'
-            ]
-        ]
-    ];
-
-    private function articleRouter($uris, $id, $function) {
+class Router
+{
+    private function articleRouter($request_uri, $article_id)
+    {
         $controller = new Controller();
         // /articles/<ここ>に何も値がない時
-        if (!array_key_exists('2', $uris)) {
-            $function = self::ROUTES[$uris[1]]['/'];
-            return $controller->$function();
+        if ($request_uri === '/articles') {
+            return $controller->articleList();
         }
         // create
-        if ($uris[2] === 'create' && !array_key_exists('3', $uris)) {
+        if ($request_uri === '/articles/create') {
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-                $function = self::ROUTES[$uris[1]]['/create']['get'];
-                return $controller->$function();
+                return $controller->getArticleCreate();
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $function = self::ROUTES[$uris[1]]['/create']['post'];
-                return $controller->$function();
+                return $controller->postArticleCreate();
             }
         }
-        // /articles/<ここ>が数値またはその次に何かしらの値が入っている時
-        if (is_numeric($uris[2])) {
-            if (!array_key_exists('3', $uris)) {
-                $function = self::ROUTES[$uris[1]]['/:id'][''];
-                return $controller->$function($id);
-            } elseif ($uris[3] === 'update' && !array_key_exists('4', $uris)) {
-                if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-                    $function = self::ROUTES[$uris[1]]['/:id']['/update']['get'];
-                    return $controller->$function($id);
-                } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $function = self::ROUTES[$uris[1]]['/:id']['/update']['post'];
-                    return $controller->$function($id);
-                }
-                $function = self::ROUTES[$uris[1]]['/:id']['/update'];
-                return $function($id);
-            } elseif ($uris[3] === 'delete' && !array_key_exists('4', $uris) && $_SERVER['REQUEST_METHOD'] === 'POST') {
-                $function = self::ROUTES[$uris[1]]['/:id']['/delete'];
-                return $controller->$function($id);
+        // detail
+        if ($request_uri === "/articles/${article_id}") {
+            return $controller->articleDetail($article_id);
+        }
+        // update
+        if ($request_uri === "/articles/${article_id}/update") {
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                return $controller->getArticleUpdate($article_id);
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                return $controller->postArticleUpdate($article_id);
             }
+        }
+        // delete
+        if ($request_uri === "/articles/${article_id}/delete" && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            return $controller->articleDelete($article_id);
         }
         http_response_code(404);
         include 'templates/404.php';
     }
 
-    public function router() {
+    public function router()
+    {
         $request_uri = $_SERVER['REQUEST_URI'];
         $uris = explode('/', $request_uri);
-        $id = '';
-        $function = '';
-
+        $article_id = '';
         // 画像配信は特別
         if ($uris[1] === 'templates' && $uris[2] === 'images' && is_numeric($uris[3])) {
             return 'http://localhost:8080' . $request_uri;
@@ -78,16 +53,16 @@ class Router {
             // TODO: これはいずれ崩壊する。そのタイミングで修正する。
             // /users/<user_id>/articles/<article_id>みたいなやつ対応。
             foreach ($uris as $uri) {
-                if ($id !== '') {
+                if ($article_id !== '') {
                     break;
                 }
                 if (preg_match("/^[0-9]+$/", $uri)) {
-                    $id = (int) $uri;
+                    $article_id = (int) $uri;
                 }
             }
             // articleへのリクエストかどうか
             if ($uris[1] === 'articles') {
-                return $this->articleRouter($uris, $id, $function);
+                return $this->articleRouter($request_uri, $article_id);
             }
         }
         http_response_code(404);
