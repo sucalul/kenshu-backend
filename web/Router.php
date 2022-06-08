@@ -1,12 +1,13 @@
 <?php
 
-require_once './views/Controller.php';
+require_once './views/ArticleController.php';
+require_once './views/AuthController.php';
 
 class Router
 {
     private function articleRouter($request_uri, $article_id)
     {
-        $controller = new Controller();
+        $controller = new ArticleController();
         // /articles/<ここ>に何も値がない時
         if ($request_uri === '/articles') {
             return $controller->articleList();
@@ -39,6 +40,18 @@ class Router
         include 'templates/404.php';
     }
 
+    private function authRouter($request_uri)
+    {
+        $controller = new AuthController();
+        if ($request_uri === '/signup') {
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                return $controller->getSignup();
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                return $controller->postSignup();
+            }
+        }
+    }
+
     public function router()
     {
         $request_uri = $_SERVER['REQUEST_URI'];
@@ -57,12 +70,14 @@ class Router
                     break;
                 }
                 if (preg_match("/^[0-9]+$/", $uri)) {
-                    $article_id = (int) $uri;
+                    $article_id = (int)$uri;
                 }
             }
             // articleへのリクエストかどうか
             if ($uris[1] === 'articles') {
                 return $this->articleRouter($request_uri, $article_id);
+            } elseif ($uris[1] === 'signup') {
+                return $this->authRouter($request_uri);
             }
         }
         http_response_code(404);

@@ -6,7 +6,7 @@ require_once 'helpers/Session.php';
 require_once 'helpers/ThumbnailHelper.php';
 require_once 'validations/ArticleValidation.php';
 
-class Controller {
+class ArticleController {
     // TODO
     // Request classを作成
     // ref: https://prtimes.slack.com/archives/CBJSBCTF1/p1654590765982449?thread_ts=1654568652.844449&cid=CBJSBCTF1
@@ -55,7 +55,7 @@ class Controller {
         $body = $_POST['body'];
         $thumbnail_resource = '';
 
-        $errors = ArticleValidation::articleValidation($_POST);
+        $errors = ArticleValidation::validate($_POST);
         if (count($errors) > 0) {
             http_response_code(400);
             $tag_connection = new Tag();
@@ -105,7 +105,7 @@ class Controller {
         $body = $_POST['body'];
         $thumbnail_resource = $_POST['is-thumbnail'];
 
-        $errors = ArticleValidation::articleValidation($_POST);
+        $errors = ArticleValidation::validate($_POST);
         if (count($errors) > 0) {
             http_response_code(400);
             $article = $connection->getByID($id);
