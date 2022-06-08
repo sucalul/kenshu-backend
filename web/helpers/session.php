@@ -1,6 +1,8 @@
 <?php
 
 class Session {
+    // TODO
+    // 関数名がpythonチックなのでphpに合わせるcreateCsrcToken()
     function create_csrf_token() {
         session_start();
         $csrf_token = bin2hex(openssl_random_pseudo_bytes(16));

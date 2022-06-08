@@ -2,6 +2,8 @@
 
 class ThumbnailHelper {
     static function checkThumbnail(string $thumbnail_resource) :array {
+        // TODO
+        // $_FILESや$_POSTをこういったところで扱わず、引数に入れて渡して上げる
         for ($i = 0; $i < count($_FILES['upload_image']['name']); $i++) {
             // file名をuniqueにする
             $resource = uniqid();
