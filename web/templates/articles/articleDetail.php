@@ -5,6 +5,7 @@
     <title>記事</title>
 </head>
 <body>
+    <?php include 'templates/session.php'; ?>
     <h3><?= htmlspecialchars($articleEntity->id, ENT_QUOTES, "UTF-8") ?></h3>
     <img src="../../templates/images/<?= htmlspecialchars($articleEntity->thumbnail_image_id, ENT_QUOTES, "UTF-8") ?>.png" alt="" style="width:200px; height:200px">
     <?php foreach($articleEntity->images as $image) : ?>

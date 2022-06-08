@@ -6,7 +6,7 @@ require_once 'helpers/Session.php';
 require_once 'helpers/ThumbnailHelper.php';
 require_once 'validations/ArticleValidation.php';
 
-class Controller {
+class ArticleController {
     // TODO
     // Request classを作成
     // ref: https://prtimes.slack.com/archives/CBJSBCTF1/p1654590765982449?thread_ts=1654568652.844449&cid=CBJSBCTF1

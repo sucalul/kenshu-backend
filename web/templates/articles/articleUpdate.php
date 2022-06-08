@@ -5,6 +5,7 @@
     <title>記事</title>
 </head>
 <body>
+    <?php include 'templates/session.php'; ?>
     <?php if($errors): ?>
     <ul class="error_list">
         <?php foreach( $errors as $value ): ?>
