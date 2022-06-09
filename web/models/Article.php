@@ -89,7 +89,14 @@ class Article extends BaseModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create(string $title, string $body, array $resources, string $thumbnail_resource, array $tags)
+    public function create(
+        string $email,
+        string $title,
+        string $body,
+        array  $resources,
+        string $thumbnail_resource,
+        array  $tags
+    )
     {
         $this->db->beginTransaction();
 
@@ -98,8 +105,20 @@ class Article extends BaseModel
         }
 
         try {
-            // TODO: 作る人が固定なのでそれを可変に
-            $stmt_articles = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
+            $sql_articles = "INSERT INTO articles(
+                                user_id,
+                                thumbnail_image_id,
+                                title,
+                                body
+                            )
+                            VALUES (
+                                (SELECT id FROM users WHERE email=:email),
+                                NULL,
+                                :title,
+                                :body
+                            );";
+            $stmt_articles = $this->db->prepare($sql_articles);
+            $stmt_articles->bindParam(':email', $email);
             $stmt_articles->bindParam(':title', $title);
             $stmt_articles->bindParam(':body', $body);
             $stmt_articles->execute();
