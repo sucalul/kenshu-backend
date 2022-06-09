@@ -10,7 +10,7 @@ class AuthController
     {
         $errors = [];
         $session = new Session();
-        $csrf_token = $session->create_csrf_token();
+        $csrf_token = $session->createCSRFToken();
         include 'templates/signup.php';
         return;
     }
@@ -19,7 +19,7 @@ class AuthController
     {
         $errors = [];
         $session = new Session();
-        if (!$session->check_csrf_token()) {
+        if (!$session->checkCSRFToken()) {
             return;
         }
 
@@ -57,7 +57,7 @@ class AuthController
     {
         $errors = [];
         $session = new Session();
-        $csrf_token = $session->create_csrf_token();
+        $csrf_token = $session->createCSRFToken();
         include 'templates/signin.php';
         return;
     }
@@ -66,7 +66,7 @@ class AuthController
     {
         $errors = [];
         $session = new Session();
-        if (!$session->check_csrf_token()) {
+        if (!$session->checkCSRFToken()) {
             return;
         }
 

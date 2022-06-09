@@ -16,7 +16,7 @@ class ArticleController
     public function articleList()
     {
         $session = new Session();
-        $csrf_token = $session->create_csrf_token();
+        $csrf_token = $session->createCSRFToken();
         $connection = new Article();
         $articles = $connection->getAll();
         include 'templates/articles/articles.php';
@@ -25,7 +25,7 @@ class ArticleController
     public function articleDetail(int $id)
     {
         $session = new Session();
-        $csrf_token = $session->create_csrf_token();
+        $csrf_token = $session->createCSRFToken();
         // ERRORSのsessionを消す
         unset($_SESSION['ERRORS']);
         $connection = new Article();
@@ -45,7 +45,7 @@ class ArticleController
     {
         $errors = [];
         $session = new Session();
-        $csrf_token = $session->create_csrf_token();
+        $csrf_token = $session->createCSRFToken();
         $connection = new Tag();
         $tags = $connection->getAll();
         include 'templates/articles/articleCreate.php';
@@ -55,7 +55,7 @@ class ArticleController
     {
         $errors = [];
         $session = new Session();
-        if (!$session->check_csrf_token()) {
+        if (!$session->checkCSRFToken()) {
             return;
         }
 
@@ -87,7 +87,7 @@ class ArticleController
     {
         $errors = [];
         $session = new Session();
-        $csrf_token = $session->create_csrf_token();
+        $csrf_token = $session->createCSRFToken();
 
         $connection = new Article();
         $article = $connection->getByID($id);
@@ -123,7 +123,7 @@ class ArticleController
     {
         $errors = [];
         $session = new Session();
-        if (!$session->check_csrf_token()) {
+        if (!$session->checkCSRFToken()) {
             return;
         }
 
@@ -176,7 +176,7 @@ class ArticleController
     public function articleDelete(int $id)
     {
         $session = new Session();
-        if (!$session->check_csrf_token()) {
+        if (!$session->checkCSRFToken()) {
             return;
         }
 
