@@ -69,6 +69,7 @@ class ArticleController
         $connection = new Article();
         $title = $_POST['title'];
         $body = $_POST['body'];
+        $email = $_SESSION['EMAIL'];
         $thumbnail_resource = '';
 
         $errors = ArticleValidation::validate($_POST);
@@ -79,7 +80,7 @@ class ArticleController
         $tags = $_POST['tags'];
 
         list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($thumbnail_resource);
-        $connection->create($title, $body, $resources, $thumbnail_resource, $tags);
+        $connection->create($email, $title, $body, $resources, $thumbnail_resource, $tags);
         header("Location: /articles");
     }
 
