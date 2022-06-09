@@ -6,7 +6,14 @@
 </head>
 <body>
 <?php include 'templates/session.php'; ?>
-<?php foreach($articles as $article) : ?>
+
+<?php if(isset($_SESSION['ERRORS'])): ?>
+<ul class="error_list">
+    <li style="color:red"><?= htmlspecialchars($_SESSION['ERRORS'], ENT_QUOTES, "UTF-8") ?></li>
+</ul>
+<?php endif; ?>
+
+<?php foreach ($articles as $article) : ?>
     <h3><?= htmlspecialchars($article['id'], ENT_QUOTES, "UTF-8") ?></h3>
     <img src="../templates/images/<?= htmlspecialchars($article['resource_id'], ENT_QUOTES, "UTF-8") ?>.png" alt="" style="width:200px; height:200px">
     <h3><?= htmlspecialchars($article['title'], ENT_QUOTES, "UTF-8") ?></h3>
@@ -16,7 +23,7 @@
         <button type="submit">Delete</button>
     </form>
     <p>-------------------------</p>
-<?php endforeach;?>
+<?php endforeach; ?>
 <button type="button" onclick="location.href='/articles/create'">新規作成</button>
 </body>
 </html>

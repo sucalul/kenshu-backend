@@ -5,6 +5,7 @@ require_once 'models/Tag.php';
 require_once 'helpers/CreateArticleHelper.php';
 require_once 'helpers/Session.php';
 require_once 'helpers/ThumbnailHelper.php';
+require_once 'helpers/UpdateArticleHelper.php';
 require_once 'validations/ArticleValidation.php';
 
 class ArticleController
@@ -25,6 +26,8 @@ class ArticleController
     {
         $session = new Session();
         $csrf_token = $session->create_csrf_token();
+        // ERRORSのsessionを消す
+        unset($_SESSION['ERRORS']);
         $connection = new Article();
         $article = $connection->getByID($id);
         if (count($article) === 0) {
@@ -89,6 +92,19 @@ class ArticleController
         $connection = new Article();
         $article = $connection->getByID($id);
 
+        // ログインチェック
+        // そもそもsetされているか確認
+        if (!isset($_SESSION['EMAIL'])) {
+            return UpdateDeleteArticleHelper::unauthorized();
+        }
+
+        $connection = new Article();
+
+        // sessionのユーザーと記事投稿したユーザーが一致しなければエラー
+        if (!UpdateDeleteArticleHelper::hasAuthorization($_SESSION, $id)) {
+            return UpdateDeleteArticleHelper::unauthorized();
+        }
+
         if (count($article) === 0) {
             http_response_code(404);
             include 'templates/404.php';
@@ -111,7 +127,18 @@ class ArticleController
             return;
         }
 
+        // ログインチェック
+        // そもそもsetされているか確認
+        if (!isset($_SESSION['EMAIL'])) {
+            return UpdateDeleteArticleHelper::unauthorized();
+        }
+
         $connection = new Article();
+        // sessionのユーザーと記事投稿したユーザーが一致しなければエラー
+        if (!UpdateDeleteArticleHelper::hasAuthorization($_SESSION, $id)) {
+            return UpdateDeleteArticleHelper::unauthorized();
+        }
+
         $title = $_POST['title'];
         $body = $_POST['body'];
         $thumbnail_resource = $_POST['is-thumbnail'];
@@ -152,7 +179,19 @@ class ArticleController
         if (!$session->check_csrf_token()) {
             return;
         }
+
+        // ログインチェック
+        // そもそもsetされているか確認
+        if (!isset($_SESSION['EMAIL'])) {
+            return UpdateDeleteArticleHelper::unauthorized();
+        }
+
         $connection = new Article();
+        // sessionのユーザーと記事投稿したユーザーが一致しなければエラー
+        if (!UpdateDeleteArticleHelper::hasAuthorization($_SESSION, $id)) {
+            return UpdateDeleteArticleHelper::unauthorized();
+        }
+
         $connection->delete($id);
         header("Location: /articles");
     }

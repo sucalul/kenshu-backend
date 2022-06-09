@@ -2,14 +2,16 @@
 require_once 'models/BaseModel.php';
 require_once 'models/Tag.php';
 
-class Article extends BaseModel {
+class Article extends BaseModel
+{
 
     function __construct()
     {
         parent::__construct();
     }
 
-    public function getAll() {
+    public function getAll()
+    {
         // 同じカラム名(id)がふたつ帰ってくるからasで対応
         $sql = "SELECT
                     articles.id as id,
@@ -30,7 +32,9 @@ class Article extends BaseModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getByID(int $id) {
+
+    public function getByID(int $id)
+    {
         $sql = "SELECT
                     articles.id as id,
                     articles.title as title,
@@ -59,7 +63,26 @@ class Article extends BaseModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create(string $title, string $body, array $resources, string $thumbnail_resource, array $tags) {
+    public function getUserEmailByArticleID(int $id)
+    {
+        $sql = "SELECT
+                    users.email
+                FROM
+                    articles
+                    INNER JOIN
+                        users
+                    ON articles.user_id = users.id
+                WHERE
+                    articles.id = :id
+                ;";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function create(string $title, string $body, array $resources, string $thumbnail_resource, array $tags)
+    {
         $this->db->beginTransaction();
 
         if (!$this->db->inTransaction()) {
@@ -67,6 +90,7 @@ class Article extends BaseModel {
         }
 
         try {
+            // TODO: 作る人が固定なのでそれを可変に
             $stmt_articles = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
             $stmt_articles->bindParam(':title', $title);
             $stmt_articles->bindParam(':body', $body);
@@ -119,12 +143,13 @@ class Article extends BaseModel {
 
     // 追加の画像がなかった時
     public function updateExceptImages(
-        int $id,
+        int    $id,
         string $title,
         string $body,
         string $thumbnail_resource,
-        array $tags
-    ) {
+        array  $tags
+    )
+    {
         // tagを更新
         $tag_connection = new Tag();
         $tag_connection->updateArticleTags($id, $tags);
@@ -151,13 +176,14 @@ class Article extends BaseModel {
     }
 
     public function update(
-        int $id,
+        int    $id,
         string $title,
         string $body,
-        array $resources,
+        array  $resources,
         string $thumbnail_resource,
-        array $tags
-    ) {
+        array  $tags
+    )
+    {
         $this->db->beginTransaction();
 
         if (!$this->db->inTransaction()) {
@@ -222,7 +248,8 @@ class Article extends BaseModel {
         }
     }
 
-    public function delete(int $id) {
+    public function delete(int $id)
+    {
         $stmt = $this->db->prepare("DELETE FROM articles WHERE id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
