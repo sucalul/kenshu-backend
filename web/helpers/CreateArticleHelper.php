@@ -5,15 +5,15 @@ class CreateArticleHelper
 {
     static function badRequest(array $errorList)
     {
-        return self::baseHelper($errorList, 400);
+        return self::setErrorResponse($errorList, 400);
     }
 
     static function unauthorized(array $errorList)
     {
-        return self::baseHelper($errorList, 401);
+        return self::setErrorResponse($errorList, 401);
     }
 
-    private static function baseHelper(array $errorList, int $statusCode): void
+    private static function setErrorResponse(array $errorList, int $statusCode): void
     {
         $errors = $errorList;
         http_response_code($statusCode);
