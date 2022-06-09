@@ -1,25 +1,30 @@
 <?php
 // データの整形を行う
 
-class ArticleEntity {
+class ArticleEntity
+{
     public int $id;
     public string $title;
     public string $body;
     public string $thumbnail_image_id;
     public array $images;
+    public string $user_name;
     public array $tags;
 
-    function __construct($article) {
+    function __construct($article)
+    {
         $this->id = $article[0]['id'];
         $this->title = $article[0]['title'];
         $this->body = $article[0]['body'];
         $this->thumbnail_image_id = $this->getThumbnailImageResourceID($article);
         $this->images = $this->getUniqueImages($article);
+        $this->user_name = $article[0]['user_name'];
         $this->tags = $this->getUniqueTags($article);
     }
 
     // サムネイル画像のresource_idを取得
-    private function getThumbnailImageResourceID(array $article) :string {
+    private function getThumbnailImageResourceID(array $article): string
+    {
         // サムネイル画像idを取得
         $thumbnail_image_id = $article[0]['thumbnail_image_id'];
         $thumbnail_resource_id = '';
@@ -37,7 +42,8 @@ class ArticleEntity {
     }
 
     // サムネイル以外の画像を取得
-    private function getUniqueImages(array $article) :array {
+    private function getUniqueImages(array $article): array
+    {
         $images = array();
         foreach ($article as $a) {
             array_push($images, $a['resource_id']);
@@ -51,7 +57,8 @@ class ArticleEntity {
         return $unique_images;
     }
 
-    private function getUniqueTags(array $article) :array {
+    private function getUniqueTags(array $article): array
+    {
         $tags = array();
         foreach ($article as $a) {
             array_push($tags, $a['tag_name']);

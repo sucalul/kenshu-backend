@@ -16,12 +16,16 @@ class Article extends BaseModel
         $sql = "SELECT
                     articles.id as id,
                     articles.title as title,
-                    article_images.resource_id as resource_id
+                    article_images.resource_id as resource_id,
+                    users.name as name
                 FROM
                     articles
                     JOIN
                         article_images
                     ON  articles.id = article_images.article_id
+                    JOIN
+                        users
+                    ON articles.user_id = users.id
                 WHERE
                     articles.thumbnail_image_id = article_images.id
                 ORDER BY
@@ -42,6 +46,7 @@ class Article extends BaseModel
                     articles.thumbnail_image_id as thumbnail_image_id,
                     article_images.id as image_id,
                     article_images.resource_id as resource_id,
+                    users.name as user_name,
                     tags.name as tag_name
                 FROM
                     articles
@@ -51,6 +56,9 @@ class Article extends BaseModel
                     JOIN
                         article_tags
                     ON articles.id = article_tags.article_id
+                    JOIN
+                        users
+                    ON articles.user_id = users.id
                     JOIN
                         tags
                     ON article_tags.tag_id = tags.id
