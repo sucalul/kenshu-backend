@@ -90,6 +90,7 @@ class Article extends BaseModel
         }
 
         try {
+            // TODO: 作る人が固定なのでそれを可変に
             $stmt_articles = $this->db->prepare("INSERT INTO articles (user_id, thumbnail_image_id, title, body) VALUES (1, NULL, :title, :body)");
             $stmt_articles->bindParam(':title', $title);
             $stmt_articles->bindParam(':body', $body);
