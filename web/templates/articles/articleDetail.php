@@ -11,6 +11,7 @@
     <?php foreach($articleEntity->images as $image) : ?>
         <img src="../../templates/images/<?= htmlspecialchars($image, ENT_QUOTES, "UTF-8") ?>.png" alt="" style="width:200px; height:200px">
     <?php endforeach;?>
+    <p>書いた人: <?= htmlspecialchars($articleEntity->user_name, ENT_QUOTES, "UTF-8") ?></p>
     <h3><?= htmlspecialchars($articleEntity->title, ENT_QUOTES, "UTF-8") ?></h3>
     <h3><?= htmlspecialchars($articleEntity->body, ENT_QUOTES, "UTF-8") ?></h3>
     <p>登録しているタグ</p>
