@@ -16,18 +16,5 @@ class SigninHelper
 
         return $errors;
     }
-
-    static function signinRequired(string $email): array
-    {
-        $errors = [];
-        $connection = new User();
-        $user = $connection->getUserByEmail($email);
-
-        if (count($user) == 0) {
-            $errors = 'ログインが必要です';
-        }
-
-        return $errors;
-    }
 }
 

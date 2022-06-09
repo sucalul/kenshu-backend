@@ -60,15 +60,7 @@ class ArticleController
         // そもそもsetされているか確認
         if (!isset($_SESSION['EMAIL'])) {
             $errors[] = 'ログインが必要です';
-        }
-        if (count($errors) > 0) {
-            return CreateArticleHelper::badRequest($errors);
-        }
-
-        // setされていることを確認できたらそのemailを持ったuserが存在するかチェックする
-        $errors = SigninHelper::signinRequired($_SESSION['EMAIL']);
-        if (count($errors) > 0) {
-            return CreateArticleHelper::badRequest($errors);
+            return CreateArticleHelper::unauthorized($errors);
         }
 
         $connection = new Article();
