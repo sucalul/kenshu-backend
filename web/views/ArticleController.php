@@ -2,15 +2,18 @@
 require_once 'entity/ArticleEntity.php';
 require_once 'models/Article.php';
 require_once 'models/Tag.php';
+require_once 'helpers/CreateArticleHelper.php';
 require_once 'helpers/Session.php';
 require_once 'helpers/ThumbnailHelper.php';
 require_once 'validations/ArticleValidation.php';
 
-class ArticleController {
+class ArticleController
+{
     // TODO
     // Request classを作成
     // ref: https://prtimes.slack.com/archives/CBJSBCTF1/p1654590765982449?thread_ts=1654568652.844449&cid=CBJSBCTF1
-    public function articleList() {
+    public function articleList()
+    {
         $session = new Session();
         $csrf_token = $session->create_csrf_token();
         $connection = new Article();
@@ -18,7 +21,8 @@ class ArticleController {
         include 'templates/articles/articles.php';
     }
 
-    public function articleDetail(int $id) {
+    public function articleDetail(int $id)
+    {
         $session = new Session();
         $csrf_token = $session->create_csrf_token();
         $connection = new Article();
@@ -34,7 +38,8 @@ class ArticleController {
         include 'templates/articles/articleDetail.php';
     }
 
-    public function getArticleCreate() {
+    public function getArticleCreate()
+    {
         $errors = [];
         $session = new Session();
         $csrf_token = $session->create_csrf_token();
@@ -43,11 +48,19 @@ class ArticleController {
         include 'templates/articles/articleCreate.php';
     }
 
-    public function postArticleCreate() {
+    public function postArticleCreate()
+    {
         $errors = [];
         $session = new Session();
         if (!$session->check_csrf_token()) {
             return;
+        }
+
+        // ここでsignin check
+        // そもそもsetされているか確認
+        if (!isset($_SESSION['EMAIL'])) {
+            $errors[] = 'ログインが必要です';
+            return CreateArticleHelper::unauthorized($errors);
         }
 
         $connection = new Article();
@@ -57,11 +70,7 @@ class ArticleController {
 
         $errors = ArticleValidation::validate($_POST);
         if (count($errors) > 0) {
-            http_response_code(400);
-            $tag_connection = new Tag();
-            $tags = $tag_connection->getAll();
-            include 'templates/articles/articleCreate.php';
-            return;
+            return CreateArticleHelper::badRequest($errors);
         }
 
         $tags = $_POST['tags'];
@@ -71,7 +80,8 @@ class ArticleController {
         header("Location: /articles");
     }
 
-    public function getArticleUpdate(int $id) {
+    public function getArticleUpdate(int $id)
+    {
         $errors = [];
         $session = new Session();
         $csrf_token = $session->create_csrf_token();
@@ -93,7 +103,8 @@ class ArticleController {
         include 'templates/articles/articleUpdate.php';
     }
 
-    public function postArticleUpdate(int $id) {
+    public function postArticleUpdate(int $id)
+    {
         $errors = [];
         $session = new Session();
         if (!$session->check_csrf_token()) {
@@ -135,7 +146,8 @@ class ArticleController {
         return;
     }
 
-    public function articleDelete(int $id) {
+    public function articleDelete(int $id)
+    {
         $session = new Session();
         if (!$session->check_csrf_token()) {
             return;
