@@ -10,7 +10,7 @@ require_once 'validations/ArticleValidation.php';
 
 class ArticleController
 {
-    // TODO
+    // TODO: この研修期間では対応なし
     // Request classを作成
     // ref: https://prtimes.slack.com/archives/CBJSBCTF1/p1654590765982449?thread_ts=1654568652.844449&cid=CBJSBCTF1
     public function articleList()
@@ -79,7 +79,7 @@ class ArticleController
 
         $tags = $_POST['tags'];
 
-        list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($thumbnail_resource);
+        list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($_POST, $_FILES);
         $connection->create($email, $title, $body, $resources, $thumbnail_resource, $tags);
         header("Location: /articles");
     }
@@ -167,7 +167,7 @@ class ArticleController
         }
 
         // 追加の画像がある時
-        list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($thumbnail_resource);
+        list($resources, $thumbnail_resource) = ThumbnailHelper::checkThumbnail($_POST, $_FILES);
 
         $connection->update($id, $title, $body, $resources, $thumbnail_resource, $tags);
         header("Location: /articles");

@@ -70,8 +70,6 @@ class Router
         }
         if (count($uris) >= 2) {
             // uriに一つでの数字があればbreakする。
-            // TODO: これはいずれ崩壊する。そのタイミングで修正する。
-            // /users/<user_id>/articles/<article_id>みたいなやつ対応。
             foreach ($uris as $uri) {
                 if ($article_id !== '') {
                     break;
